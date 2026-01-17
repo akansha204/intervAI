@@ -6,6 +6,7 @@ import InterviewSetupScreen from '../screens/interview/InterviewSetupScreen';
 import InterviewScreen from '../screens/interview/InterviewScreen';
 import SessionSummaryScreen from '../screens/interview/SessionSummaryScreen';
 import ProgressScreen from '../screens/progress/ProgressScreen';
+import ProfileScreen from '../screens/profile/ProfileScreen';
 import { MainTabParamList } from '../types';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
@@ -58,7 +59,7 @@ const MainNavigator = () => {
             />
             <Tab.Screen
                 name="Profile"
-                component={HomeScreen} // Placeholder
+                component={ProfileScreen}
                 options={{ title: 'Profile', headerShown: true }}
             />
         </Tab.Navigator>
