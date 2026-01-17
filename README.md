@@ -1,97 +1,131 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# AI Interview Prep Coach - Mobile App
 
-# Getting Started
+React Native mobile application for AI-powered interview preparation.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+## 🚀 Quick Start
 
-## Step 1: Start Metro
-
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
-
-To start the Metro dev server, run the following command from the root of your React Native project:
-
-```sh
-# Using npm
+```bash
+npm install
 npm start
-
-# OR using Yarn
-yarn start
+npm run android  # or npm run ios
 ```
 
-## Step 2: Build and run your app
+## 📦 Dependencies
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+- **@react-navigation/native** - Navigation
+- **@react-navigation/stack** - Stack navigator
+- **@react-navigation/bottom-tabs** - Tab navigator
+- **@reduxjs/toolkit** - State management
+- **react-redux** - Redux bindings
+- **axios** - HTTP client
+- **@react-native-async-storage/async-storage** - Local storage
+
+## 📱 Screens
+
+### Auth
+- LoginScreen
+- RegisterScreen
+
+### Main
+- HomeScreen - Dashboard
+- InterviewSetupScreen - Interview configuration
+- InterviewScreen - Q&A interface
+- SessionSummaryScreen - Results
+
+### Progress
+- ProgressScreen - History & analytics
+- FeedbackDetailScreen - STAR analysis
+
+### Profile
+- ProfileScreen - User profile & achievements
+
+### Additional
+- ResumeInputScreen - Resume entry
+- CompanyPrepScreen - Company prep
+- DailyChallengeScreen - Daily challenges
+
+## 🗂️ Project Structure
+
+```
+src/
+├── navigation/          # Navigation setup
+│   ├── AppNavigator.tsx
+│   ├── AuthNavigator.tsx
+│   └── MainNavigator.tsx
+├── screens/            # All screens
+│   ├── auth/
+│   ├── home/
+│   ├── interview/
+│   ├── progress/
+│   ├── profile/
+│   ├── resume/
+│   ├── company/
+│   └── challenge/
+├── store/              # Redux store
+│   ├── index.ts
+│   └── slices/
+│       ├── authSlice.ts
+│       └── interviewSlice.ts
+├── services/           # API services
+│   ├── api.ts
+│   ├── authService.ts
+│   └── interviewService.ts
+├── components/         # Reusable components
+│   └── common/
+│       ├── Button.tsx
+│       └── Input.tsx
+├── utils/              # Utilities
+│   └── validation.ts
+└── types/              # TypeScript types
+    └── index.ts
+```
+
+## 🎨 Styling
+
+All components use **inline styling** for consistency and simplicity.
+
+## 🔐 Authentication Flow
+
+1. App launches → Check AsyncStorage for tokens
+2. Tokens found → Auto-login → Main app
+3. No tokens → Login/Register screens
+4. After login → Save tokens → Navigate to Main
+
+## 📡 API Integration
+
+Base URL: `http://localhost:3000/api`
+
+- Automatic JWT token injection
+- Token refresh on 401 errors
+- Error handling with retry logic
+
+## 🧪 Testing
+
+```bash
+npm test
+```
+
+## 🏗️ Build
 
 ### Android
-
-```sh
-# Using npm
-npm run android
-
-# OR using Yarn
-yarn android
+```bash
+cd android
+./gradlew assembleRelease
 ```
 
 ### iOS
-
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-```sh
-bundle install
+```bash
+cd ios
+xcodebuild -workspace YourApp.xcworkspace -scheme YourApp -configuration Release
 ```
 
-Then, and every time you update your native dependencies, run:
+## 📝 Scripts
 
-```sh
-bundle exec pod install
-```
+- `npm start` - Start Metro bundler
+- `npm run android` - Run on Android
+- `npm run ios` - Run on iOS
+- `npm run lint` - Run linter
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+---
 
-```sh
-# Using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
-```
-
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
-
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
-
-## Step 3: Modify your app
-
-Now that you have successfully run the app, let's make changes!
-
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
-
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
-
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+Built with React Native + TypeScript + Redux Toolkit
