@@ -4,6 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from '../screens/home/HomeScreen';
 import InterviewSetupScreen from '../screens/interview/InterviewSetupScreen';
 import InterviewScreen from '../screens/interview/InterviewScreen';
+import SessionSummaryScreen from '../screens/interview/SessionSummaryScreen';
 import { MainTabParamList } from '../types';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
@@ -21,6 +22,11 @@ function InterviewStackNavigator() {
                 name="InterviewSession"
                 component={InterviewScreen}
                 options={{ title: 'Interview', headerLeft: () => null }}
+            />
+            <InterviewStack.Screen
+                name="SessionSummary"
+                component={SessionSummaryScreen}
+                options={{ title: 'Session Summary', headerLeft: () => null }}
             />
         </InterviewStack.Navigator>
     );
