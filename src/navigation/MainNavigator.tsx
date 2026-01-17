@@ -5,6 +5,7 @@ import HomeScreen from '../screens/home/HomeScreen';
 import InterviewSetupScreen from '../screens/interview/InterviewSetupScreen';
 import InterviewScreen from '../screens/interview/InterviewScreen';
 import SessionSummaryScreen from '../screens/interview/SessionSummaryScreen';
+import ProgressScreen from '../screens/progress/ProgressScreen';
 import { MainTabParamList } from '../types';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
@@ -52,7 +53,7 @@ const MainNavigator = () => {
             />
             <Tab.Screen
                 name="Progress"
-                component={HomeScreen} // Placeholder
+                component={ProgressScreen}
                 options={{ title: 'Progress', headerShown: true }}
             />
             <Tab.Screen
