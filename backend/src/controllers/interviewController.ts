@@ -216,7 +216,6 @@ export const submitAnswer = async (req: AuthRequest, res: Response) => {
                 feedback: {
                     score: aiFeedback.score,
                     strengths: aiFeedback.strengths,
-                    weaknesses: aiFeedback.weaknesses,
                     improvements: aiFeedback.improvements,
                     starAnalysis: aiFeedback.starAnalysis,
                 },
