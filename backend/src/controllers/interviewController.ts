@@ -170,10 +170,33 @@ export const submitAnswer = async (req: AuthRequest, res: Response) => {
         }
 
         // Generate AI feedback
+        console.log('📝 Generating feedback for answer...');
+        console.log('Question:', question.question);
+        console.log('Answer:', answer.substring(0, 100) + '...');
+
         const feedbackPrompt = promptService.generateFeedbackPrompt(question.question, answer);
-        const aiFeedback = await geminiService.generateJSONContent<promptService.FeedbackResponse>(
-            feedbackPrompt
-        );
+
+        let aiFeedback;
+        try {
+            aiFeedback = await geminiService.generateJSONContent<promptService.FeedbackResponse>(
+                feedbackPrompt
+            );
+            console.log('✅ Feedback generated successfully');
+        } catch (feedbackError: any) {
+            console.error('❌ Feedback generation failed:', feedbackError.message);
+            // Continue with default feedback if AI fails
+            aiFeedback = {
+                score: 5,
+                strengths: ['Answer provided'],
+                improvements: ['Unable to generate detailed feedback at this time. Please try again later.'],
+                starAnalysis: {
+                    situation: 'N/A',
+                    task: 'N/A',
+                    action: answer.substring(0, 100),
+                    result: 'N/A'
+                }
+            };
+        }
 
         // Save answer
         const savedAnswer = await prisma.answer.create({
