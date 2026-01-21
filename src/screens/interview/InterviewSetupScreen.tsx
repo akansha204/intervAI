@@ -21,8 +21,12 @@ const InterviewSetupScreen = () => {
     ];
 
     const handleStart = () => {
-        // TODO: Navigate to interview screen with selected options
         console.log('Starting interview:', { selectedType, selectedDifficulty });
+        // Navigate to interview session screen
+        navigation.navigate('InterviewSession' as never, {
+            type: selectedType,
+            difficulty: selectedDifficulty,
+        } as never);
     };
 
     return (

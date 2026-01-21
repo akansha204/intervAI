@@ -5,6 +5,7 @@ import {
     ScrollView,
     TouchableOpacity,
     RefreshControl,
+    Alert,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
@@ -27,8 +28,11 @@ const HomeScreen = () => {
     };
 
     const handleStartInterview = () => {
+        console.log('🎯 Start Interview button pressed!');
+        Alert.alert('Button Pressed!', 'Navigating to Interview...');
         // Navigate to Interview tab
         navigation.navigate('Interview' as never);
+        console.log('📍 Navigation called');
     };
 
     const stats = {
