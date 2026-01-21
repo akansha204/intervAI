@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Base URL - Update this with your backend URL
 const API_BASE_URL = __DEV__
-    ? 'http://localhost:3000/api'  // Development
+    ? 'http://10.0.2.2:3000/api'  // Android emulator (10.0.2.2 = localhost on host machine)
     : 'https://your-production-url.com/api';  // Production
 
 // Create axios instance
@@ -70,7 +70,7 @@ api.interceptors.response.use(
         }
 
         // Handle other errors
-        const errorMessage = error.response?.data?.message || error.message || 'An error occurred';
+        const errorMessage = (error.response?.data as any)?.message || error.message || 'An error occurred';
         return Promise.reject(new Error(errorMessage));
     }
 );
