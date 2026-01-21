@@ -34,13 +34,34 @@ export const generateJSONContent = async <T>(prompt: string): Promise<T> => {
         const response = await result.response;
         const text = response.text();
 
-        // Extract JSON from markdown code blocks if present
-        const jsonMatch = text.match(/```json\n([\s\S]*?)\n```/) || text.match(/```\n([\s\S]*?)\n```/);
-        const jsonText = jsonMatch ? jsonMatch[1] : text;
+        console.log('🤖 Gemini raw response:', text.substring(0, 200));
 
-        return JSON.parse(jsonText.trim());
+        // Try multiple extraction methods
+        let jsonText = text;
+
+        // Method 1: Extract from markdown code blocks
+        const jsonMatch = text.match(/```json\n([\s\S]*?)\n```/) || text.match(/```\n([\s\S]*?)\n```/);
+        if (jsonMatch) {
+            jsonText = jsonMatch[1];
+        }
+
+        // Method 2: Extract JSON object/array
+        const objectMatch = text.match(/\{[\s\S]*\}/) || text.match(/\[[\s\S]*\]/);
+        if (objectMatch && !jsonMatch) {
+            jsonText = objectMatch[0];
+        }
+
+        // Clean up the text
+        jsonText = jsonText.trim();
+
+        console.log('📝 Extracted JSON:', jsonText.substring(0, 200));
+
+        const parsed = JSON.parse(jsonText);
+        console.log('✅ Successfully parsed JSON');
+        return parsed;
     } catch (error: any) {
         console.error('❌ Gemini JSON Parse Error:', error.message);
+        console.error('Raw response:', error);
         throw new Error('Failed to parse AI JSON response');
     }
 };
