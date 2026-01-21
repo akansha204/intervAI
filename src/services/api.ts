@@ -3,8 +3,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Base URL - Update this with your backend URL
 const API_BASE_URL = __DEV__
-    ? 'http://10.0.2.2:3000/api'  // Android emulator (10.0.2.2 = localhost on host machine)
+    ? 'http://10.205.221.123:3000/api'  // Physical device - use computer's IP address
     : 'https://your-production-url.com/api';  // Production
+
+console.log('🌐 API Base URL:', API_BASE_URL);
 
 // Create axios instance
 const api: AxiosInstance = axios.create({
@@ -18,6 +20,8 @@ const api: AxiosInstance = axios.create({
 // Request interceptor - Add auth token
 api.interceptors.request.use(
     async (config: InternalAxiosRequestConfig) => {
+        console.log('📤 API Request:', config.method?.toUpperCase(), config.url);
+        console.log('📍 Full URL:', config.baseURL + config.url);
         const token = await AsyncStorage.getItem('accessToken');
         if (token && config.headers) {
             config.headers.Authorization = `Bearer ${token}`;
@@ -25,6 +29,7 @@ api.interceptors.request.use(
         return config;
     },
     (error) => {
+        console.error('❌ Request Error:', error);
         return Promise.reject(error);
     }
 );

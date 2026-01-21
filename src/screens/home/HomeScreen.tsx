@@ -7,10 +7,12 @@ import {
     RefreshControl,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
 import { RootState, AppDispatch } from '../../store';
 import { logout } from '../../store/slices/authSlice';
 
 const HomeScreen = () => {
+    const navigation = useNavigation();
     const dispatch = useDispatch<AppDispatch>();
     const { user } = useSelector((state: RootState) => state.auth);
     const [refreshing, setRefreshing] = React.useState(false);
@@ -22,6 +24,11 @@ const HomeScreen = () => {
 
     const handleLogout = () => {
         dispatch(logout());
+    };
+
+    const handleStartInterview = () => {
+        // Navigate to Interview tab
+        navigation.navigate('Interview' as never);
     };
 
     const stats = {
@@ -77,7 +84,7 @@ const HomeScreen = () => {
             </View>
 
             {/* Quick Start Button */}
-            <TouchableOpacity style={{ backgroundColor: '#007AFF', marginHorizontal: 20, marginTop: 24, padding: 16, borderRadius: 12, alignItems: 'center' }}>
+            <TouchableOpacity onPress={handleStartInterview} style={{ backgroundColor: '#007AFF', marginHorizontal: 20, marginTop: 24, padding: 16, borderRadius: 12, alignItems: 'center' }}>
                 <Text style={{ color: '#fff', fontSize: 18, fontWeight: '600' }}>Start New Interview</Text>
             </TouchableOpacity>
 
