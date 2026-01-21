@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Base URL - Update this with your backend URL
 const API_BASE_URL = __DEV__
-    ? 'http://10.205.221.123:3000/api'  // Physical device - use computer's IP address
+    ? 'http://10.205.221.130:3000/api'  // Physical device - use computer's IP address
     : 'https://your-production-url.com/api';  // Production
 
 console.log('🌐 API Base URL:', API_BASE_URL);
