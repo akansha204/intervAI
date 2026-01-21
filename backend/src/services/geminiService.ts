@@ -14,7 +14,8 @@ const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
  */
 export const generateContent = async (prompt: string): Promise<string> => {
     try {
-        const model = genAI.getGenerativeModel({ model: 'models/gemini-1.5-flash' });
+        // Using gemini-3-flash-preview as shown in Google AI Studio
+        const model = genAI.getGenerativeModel({ model: 'gemini-3-flash-preview' });
         const result = await model.generateContent(prompt);
         const response = await result.response;
         return response.text();
@@ -29,7 +30,7 @@ export const generateContent = async (prompt: string): Promise<string> => {
  */
 export const generateJSONContent = async <T>(prompt: string): Promise<T> => {
     try {
-        const model = genAI.getGenerativeModel({ model: 'models/gemini-1.5-flash' });
+        const model = genAI.getGenerativeModel({ model: 'gemini-3-flash-preview' });
         const result = await model.generateContent(prompt);
         const response = await result.response;
         const text = response.text();
