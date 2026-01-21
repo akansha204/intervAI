@@ -48,15 +48,27 @@ const InterviewScreen = () => {
         }
 
         try {
+            console.log('📤 Submitting answer...');
+            console.log('Session ID:', sessionId);
+            console.log('Question ID:', currentQuestion.id);
+            console.log('Answer length:', answer.length);
+
             setSubmitting(true);
             const result = await interviewService.submitAnswer(
                 sessionId,
                 currentQuestion.id,
                 answer
             );
+
+            console.log('✅ Answer submitted successfully');
+            console.log('Feedback received:', result.feedback);
+
             setFeedback(result.feedback);
             setAnswer('');
         } catch (error: any) {
+            console.error('❌ Submit answer error:', error);
+            console.error('Error message:', error.message);
+            console.error('Error response:', error.response?.data);
             Alert.alert('Error', error.message || 'Failed to submit answer');
         } finally {
             setSubmitting(false);
