@@ -198,16 +198,33 @@ export const submitAnswer = async (req: AuthRequest, res: Response) => {
             };
         }
 
+        console.log('💾 Saving answer to database...');
+        const answerData = {
+            sessionId,
+            questionId,
+            answer: answer ? answer.substring(0, 50) + '...' : 'N/A',
+            transcription: transcription ? 'Present' : 'Null',
+            score: aiFeedback ? aiFeedback.score : 'Undefined'
+        };
+        console.log('Stats Payload:', JSON.stringify(answerData));
+
         // Save answer
-        const savedAnswer = await prisma.answer.create({
-            data: {
-                sessionId,
-                questionId,
-                answer,
-                transcription: transcription || null,
-                score: aiFeedback.score,
-            },
-        });
+        let savedAnswer;
+        try {
+            savedAnswer = await prisma.answer.create({
+                data: {
+                    sessionId,
+                    questionId,
+                    answer,
+                    transcription: transcription || null,
+                    score: aiFeedback.score,
+                },
+            });
+            console.log('✅ Answer saved to DB with ID:', savedAnswer.id);
+        } catch (dbError: any) {
+            console.error('❌ Database save failed:', dbError.message);
+            throw new Error(`Database save failed: ${dbError.message}`);
+        }
 
         return res.status(200).json({
             status: 'success',
