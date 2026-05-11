@@ -1,10 +1,61 @@
-# OSX
-#
+# =========================
+# Global
+# =========================
 .DS_Store
+.env
+.env.local
+*.log
+
+# =========================
+# Node.js
+# =========================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# =========================
+# Backend
+# =========================
+backend/dist/
+backend/node_modules/
+backend/.env
+
+# Prisma
+backend/prisma/*.db
+
+# =========================
+# React Native Mobile
+# =========================
+
+# Metro
+.metro-health-check*
+
+# Testing
+coverage/
+
+# Bundle
+*.jsbundle
+
+# React Native node_modules
+mobile/node_modules/
+
+# Android
+mobile/android/.gradle/
+mobile/android/build/
+mobile/android/app/build/
+mobile/android/local.properties
+mobile/android/*.iml
+mobile/android/.cxx/
+mobile/android/.kotlin/
+
+# iOS
+mobile/ios/build/
+mobile/ios/Pods/
+mobile/ios/DerivedData/
 
 # Xcode
-#
-build/
 *.pbxuser
 !default.pbxuser
 *.mode1v3
@@ -16,57 +67,28 @@ build/
 xcuserdata
 *.xccheckout
 *.moved-aside
-DerivedData
 *.hmap
 *.ipa
 *.xcuserstate
 **/.xcode.env.local
 
-# Android/IntelliJ
-#
-build/
-.idea
-.gradle
-local.properties
-*.iml
-*.hprof
-.cxx/
-*.keystore
-!debug.keystore
-.kotlin/
-
-# node.js
-#
-node_modules/
-npm-debug.log
-yarn-error.log
-
-# fastlane
-#
-# It is recommended to not store the screenshots in the git repo. Instead, use fastlane to re-generate the
-# screenshots whenever they are needed.
-# For more information about the recommended setup visit:
-# https://docs.fastlane.tools/best-practices/source-control/
-
-**/fastlane/report.xml
-**/fastlane/Preview.html
-**/fastlane/screenshots
-**/fastlane/test_output
-
-# Bundle artifact
-*.jsbundle
-
-# Ruby / CocoaPods
-**/Pods/
+# CocoaPods
 /vendor/bundle/
 
-# Temporary files created by Metro to check the health of the file watcher
-.metro-health-check*
+# =========================
+# IDE
+# =========================
+.idea/
+.vscode/
 
-# testing
-/coverage
+# =========================
+# TypeScript
+# =========================
+*.tsbuildinfo
 
+# =========================
 # Yarn
+# =========================
 .yarn/*
 !.yarn/patches
 !.yarn/plugins
