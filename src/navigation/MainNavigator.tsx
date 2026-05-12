@@ -8,6 +8,7 @@ import SessionSummaryScreen from '../screens/interview/SessionSummaryScreen';
 import ProgressScreen from '../screens/progress/ProgressScreen';
 import ProfileScreen from '../screens/profile/ProfileScreen';
 import { MainTabParamList } from '../types';
+import { colors } from '../styles/colors';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 const InterviewStack = createStackNavigator();
@@ -39,8 +40,8 @@ const MainNavigator = () => {
         <Tab.Navigator
             screenOptions={{
                 headerShown: false,
-                tabBarActiveTintColor: '#007AFF',
-                tabBarInactiveTintColor: '#8E8E93',
+                tabBarActiveTintColor: colors.primary[500],
+                tabBarInactiveTintColor: colors.Greyscale[400],
             }}>
             <Tab.Screen
                 name="Home"

@@ -1,5 +1,8 @@
 import React from 'react';
-import { View, Text, TextInput, StyleSheet, TextInputProps } from 'react-native';
+import { View, Text, TextInput, TextInputProps } from 'react-native';
+import { colors } from '../../styles/colors';
+import { texts } from '../../styles/texts';
+import { scale } from '../../helpers/scaler';
 
 interface InputProps extends TextInputProps {
     label: string;
@@ -9,45 +12,41 @@ interface InputProps extends TextInputProps {
 
 const Input: React.FC<InputProps> = ({ label, error, containerStyle, ...props }) => {
     return (
-        <View style={[styles.container, containerStyle]}>
-            <Text style={styles.label}>{label}</Text>
+        <View style={[{ marginBottom: scale(16) }, containerStyle]}>
+            <Text
+                style={[
+                    texts.body.small.semibold,
+                    { color: colors.Greyscale[800], marginBottom: scale(8) },
+                ]}>
+                {label}
+            </Text>
             <TextInput
-                style={[styles.input, error && styles.inputError]}
-                placeholderTextColor="#999"
+                style={[
+                    texts.body.medium.regular,
+                    {
+                        height: scale(50),
+                        borderWidth: scale(1),
+                        borderColor: error ? colors.Alert.Error[100] : colors.Greyscale[200],
+                        borderRadius: scale(8),
+                        paddingHorizontal: scale(16),
+                        color: colors.Greyscale[900],
+                        backgroundColor: colors.Others.white,
+                    },
+                ]}
+                placeholderTextColor={colors.Greyscale[400]}
                 {...props}
             />
-            {error && <Text style={styles.errorText}>{error}</Text>}
+            {error && (
+                <Text
+                    style={[
+                        texts.body.extraSmall.regular,
+                        { color: colors.Alert.Error[100], marginTop: scale(4) },
+                    ]}>
+                    {error}
+                </Text>
+            )}
         </View>
     );
 };
-
-const styles = StyleSheet.create({
-    container: {
-        marginBottom: 16,
-    },
-    label: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: '#333',
-        marginBottom: 8,
-    },
-    input: {
-        height: 50,
-        borderWidth: 1,
-        borderColor: '#ddd',
-        borderRadius: 8,
-        paddingHorizontal: 16,
-        fontSize: 16,
-        backgroundColor: '#fff',
-    },
-    inputError: {
-        borderColor: '#ff3b30',
-    },
-    errorText: {
-        fontSize: 12,
-        color: '#ff3b30',
-        marginTop: 4,
-    },
-});
 
 export default Input;

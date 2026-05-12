@@ -1,16 +1,22 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Button from '../../components/common/Button';
+import { colors } from '../../styles/colors';
+import { texts } from '../../styles/texts';
+import shadowStyles from '../../styles/shadow';
+import { scale } from '../../helpers/scaler';
+import VSpacer from '../../components/base/spacer/VSpacer/VSpacer';
+import HSpacer from '../../components/base/spacer/HSpacer/HSpacer';
 
 const DailyChallengeScreen = () => {
     const navigation = useNavigation();
-    const [challengeCompleted, setChallengeCompleted] = useState(false);
+    const [challengeCompleted] = useState(false);
 
     const today = new Date().toLocaleDateString('en-US', {
         weekday: 'long',
         month: 'long',
-        day: 'numeric'
+        day: 'numeric',
     });
 
     const dailyChallenge = {
@@ -21,11 +27,7 @@ const DailyChallengeScreen = () => {
         timeEstimate: '15 min',
     };
 
-    const streakData = {
-        current: 5,
-        longest: 12,
-        total: 45,
-    };
+    const streakData = { current: 5, longest: 12, total: 45 };
 
     const weekProgress = [
         { day: 'Mon', completed: true },
@@ -41,113 +43,187 @@ const DailyChallengeScreen = () => {
         navigation.navigate('Interview' as never);
     };
 
+    const renderStreakItem = (icon: string, value: number, label: string) => (
+        <View style={{ alignItems: 'center' }}>
+            <Text style={{ fontSize: scale(32) }}>{icon}</Text>
+            <VSpacer height={4} />
+            <Text style={[texts.heading.heading4, { color: colors.Greyscale[900] }]}>{value}</Text>
+            <VSpacer height={2} />
+            <Text style={[texts.body.extraSmall.regular, { color: colors.Greyscale[500] }]}>
+                {label}
+            </Text>
+        </View>
+    );
+
     return (
-        <ScrollView style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
+        <ScrollView style={{ flex: 1, backgroundColor: colors.Greyscale[0] }}>
             {/* Header */}
-            <View style={{ backgroundColor: '#007AFF', padding: 24 }}>
-                <Text style={{ fontSize: 16, color: '#fff', opacity: 0.9, marginBottom: 4 }}>
+            <View style={{ backgroundColor: colors.primary[500], padding: scale(24) }}>
+                <Text
+                    style={[
+                        texts.body.medium.regular,
+                        { color: colors.Others.white, opacity: 0.9 },
+                    ]}>
                     {today}
                 </Text>
-                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#fff', marginBottom: 8 }}>
+                <VSpacer height={4} />
+                <Text style={[texts.heading.heading3, { color: colors.Others.white }]}>
                     Daily Challenge
                 </Text>
-                <Text style={{ fontSize: 16, color: '#fff', opacity: 0.9 }}>
+                <VSpacer height={8} />
+                <Text
+                    style={[
+                        texts.body.medium.regular,
+                        { color: colors.Others.white, opacity: 0.9 },
+                    ]}>
                     Keep your streak going! 🔥
                 </Text>
             </View>
 
             {/* Streak Stats */}
-            <View style={{ backgroundColor: '#fff', marginHorizontal: 16, marginTop: -20, borderRadius: 12, padding: 20, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4, elevation: 3 }}>
+            <View
+                style={[
+                    {
+                        backgroundColor: colors.Others.white,
+                        marginHorizontal: scale(16),
+                        marginTop: -scale(20),
+                        borderRadius: scale(12),
+                        padding: scale(20),
+                    },
+                    shadowStyles.Medium,
+                ]}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
-                    <View style={{ alignItems: 'center' }}>
-                        <Text style={{ fontSize: 32, fontWeight: 'bold', color: '#FF9500' }}>🔥</Text>
-                        <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#333', marginTop: 4 }}>
-                            {streakData.current}
-                        </Text>
-                        <Text style={{ fontSize: 12, color: '#666', marginTop: 2 }}>Day Streak</Text>
-                    </View>
-                    <View style={{ width: 1, backgroundColor: '#E5E5EA' }} />
-                    <View style={{ alignItems: 'center' }}>
-                        <Text style={{ fontSize: 32, fontWeight: 'bold', color: '#34C759' }}>🏆</Text>
-                        <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#333', marginTop: 4 }}>
-                            {streakData.longest}
-                        </Text>
-                        <Text style={{ fontSize: 12, color: '#666', marginTop: 2 }}>Best Streak</Text>
-                    </View>
-                    <View style={{ width: 1, backgroundColor: '#E5E5EA' }} />
-                    <View style={{ alignItems: 'center' }}>
-                        <Text style={{ fontSize: 32, fontWeight: 'bold', color: '#007AFF' }}>✅</Text>
-                        <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#333', marginTop: 4 }}>
-                            {streakData.total}
-                        </Text>
-                        <Text style={{ fontSize: 12, color: '#666', marginTop: 2 }}>Completed</Text>
-                    </View>
+                    {renderStreakItem('🔥', streakData.current, 'Day Streak')}
+                    <View style={{ width: scale(1), backgroundColor: colors.Greyscale[100] }} />
+                    {renderStreakItem('🏆', streakData.longest, 'Best Streak')}
+                    <View style={{ width: scale(1), backgroundColor: colors.Greyscale[100] }} />
+                    {renderStreakItem('✅', streakData.total, 'Completed')}
                 </View>
             </View>
 
             {/* Week Progress */}
-            <View style={{ backgroundColor: '#fff', marginHorizontal: 16, marginTop: 16, borderRadius: 12, padding: 20 }}>
-                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#333', marginBottom: 16 }}>
+            <View
+                style={{
+                    backgroundColor: colors.Others.white,
+                    marginHorizontal: scale(16),
+                    marginTop: scale(16),
+                    borderRadius: scale(12),
+                    padding: scale(20),
+                }}>
+                <Text style={[texts.heading.heading6, { color: colors.Greyscale[900] }]}>
                     This Week
                 </Text>
+                <VSpacer height={16} />
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                     {weekProgress.map((day, index) => (
                         <View key={index} style={{ alignItems: 'center' }}>
-                            <View style={{
-                                width: 40,
-                                height: 40,
-                                borderRadius: 20,
-                                backgroundColor: day.completed ? '#34C759' : '#F5F5F5',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                marginBottom: 8,
-                            }}>
-                                <Text style={{ fontSize: 18 }}>
+                            <View
+                                style={{
+                                    width: scale(40),
+                                    height: scale(40),
+                                    borderRadius: scale(20),
+                                    backgroundColor: day.completed
+                                        ? colors.Alert.Success[100]
+                                        : colors.Greyscale[50],
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                }}>
+                                <Text style={[texts.body.large.regular, { color: colors.Others.white }]}>
                                     {day.completed ? '✓' : '○'}
                                 </Text>
                             </View>
-                            <Text style={{ fontSize: 12, color: '#666' }}>{day.day}</Text>
+                            <VSpacer height={8} />
+                            <Text
+                                style={[
+                                    texts.body.extraSmall.regular,
+                                    { color: colors.Greyscale[500] },
+                                ]}>
+                                {day.day}
+                            </Text>
                         </View>
                     ))}
                 </View>
             </View>
 
             {/* Today's Challenge */}
-            <View style={{ backgroundColor: '#fff', marginHorizontal: 16, marginTop: 16, borderRadius: 12, padding: 20 }}>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#333' }}>
+            <View
+                style={{
+                    backgroundColor: colors.Others.white,
+                    marginHorizontal: scale(16),
+                    marginTop: scale(16),
+                    borderRadius: scale(12),
+                    padding: scale(20),
+                }}>
+                <View
+                    style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                    }}>
+                    <Text style={[texts.heading.heading6, { color: colors.Greyscale[900] }]}>
                         Today's Challenge
                     </Text>
-                    <View style={{ backgroundColor: '#FF9500', paddingHorizontal: 12, paddingVertical: 4, borderRadius: 12 }}>
-                        <Text style={{ color: '#fff', fontSize: 12, fontWeight: '600' }}>
+                    <View
+                        style={{
+                            backgroundColor: colors.Alert.Warning[100],
+                            paddingHorizontal: scale(12),
+                            paddingVertical: scale(4),
+                            borderRadius: scale(12),
+                        }}>
+                        <Text
+                            style={[
+                                texts.body.extraSmall.semibold,
+                                { color: colors.Others.white },
+                            ]}>
                             {dailyChallenge.difficulty}
                         </Text>
                     </View>
                 </View>
 
-                <Text style={{ fontSize: 18, fontWeight: '600', color: '#333', marginBottom: 12 }}>
+                <VSpacer height={16} />
+                <Text style={[texts.body.large.semibold, { color: colors.Greyscale[900] }]}>
                     {dailyChallenge.title}
                 </Text>
-                <Text style={{ fontSize: 14, color: '#666', marginBottom: 16, lineHeight: 20 }}>
+                <VSpacer height={12} />
+                <Text style={[texts.body.small.regular, { color: colors.Greyscale[500] }]}>
                     {dailyChallenge.description}
                 </Text>
 
-                <View style={{ flexDirection: 'row', gap: 16, marginBottom: 20 }}>
+                <VSpacer height={16} />
+                <View style={{ flexDirection: 'row' }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <Text style={{ fontSize: 16, marginRight: 6 }}>⏱️</Text>
-                        <Text style={{ fontSize: 14, color: '#666' }}>{dailyChallenge.timeEstimate}</Text>
+                        <Text style={{ fontSize: scale(16) }}>⏱️</Text>
+                        <HSpacer width={6} />
+                        <Text style={[texts.body.small.regular, { color: colors.Greyscale[500] }]}>
+                            {dailyChallenge.timeEstimate}
+                        </Text>
                     </View>
+                    <HSpacer width={16} />
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <Text style={{ fontSize: 16, marginRight: 6 }}>⭐</Text>
-                        <Text style={{ fontSize: 14, color: '#666' }}>{dailyChallenge.points} points</Text>
+                        <Text style={{ fontSize: scale(16) }}>⭐</Text>
+                        <HSpacer width={6} />
+                        <Text style={[texts.body.small.regular, { color: colors.Greyscale[500] }]}>
+                            {dailyChallenge.points} points
+                        </Text>
                     </View>
                 </View>
 
+                <VSpacer height={20} />
                 {!challengeCompleted ? (
                     <Button title="Start Challenge" onPress={handleStartChallenge} />
                 ) : (
-                    <View style={{ backgroundColor: '#34C759', padding: 16, borderRadius: 12, alignItems: 'center' }}>
-                        <Text style={{ color: '#fff', fontSize: 16, fontWeight: '600' }}>
+                    <View
+                        style={{
+                            backgroundColor: colors.Alert.Success[100],
+                            padding: scale(16),
+                            borderRadius: scale(12),
+                            alignItems: 'center',
+                        }}>
+                        <Text
+                            style={[
+                                texts.body.medium.semibold,
+                                { color: colors.Others.white },
+                            ]}>
                             ✓ Challenge Completed!
                         </Text>
                     </View>
@@ -155,14 +231,33 @@ const DailyChallengeScreen = () => {
             </View>
 
             {/* Motivational Quote */}
-            <View style={{ backgroundColor: '#F0F8FF', marginHorizontal: 16, marginTop: 16, marginBottom: 24, borderRadius: 12, padding: 20, borderLeftWidth: 4, borderLeftColor: '#007AFF' }}>
-                <Text style={{ fontSize: 16, fontStyle: 'italic', color: '#333', marginBottom: 8 }}>
+            <View
+                style={{
+                    backgroundColor: colors.primary[50],
+                    marginHorizontal: scale(16),
+                    marginTop: scale(16),
+                    borderRadius: scale(12),
+                    padding: scale(20),
+                    borderLeftWidth: scale(4),
+                    borderLeftColor: colors.primary[500],
+                }}>
+                <Text
+                    style={[
+                        texts.body.medium.regular,
+                        { color: colors.Greyscale[900], fontStyle: 'italic' },
+                    ]}>
                     "Success is the sum of small efforts repeated day in and day out."
                 </Text>
-                <Text style={{ fontSize: 14, color: '#666', textAlign: 'right' }}>
+                <VSpacer height={8} />
+                <Text
+                    style={[
+                        texts.body.small.regular,
+                        { color: colors.Greyscale[500], textAlign: 'right' },
+                    ]}>
                     - Robert Collier
                 </Text>
             </View>
+            <VSpacer height={24} />
         </ScrollView>
     );
 };

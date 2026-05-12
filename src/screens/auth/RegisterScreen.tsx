@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import {
     View,
     Text,
-    StyleSheet,
     KeyboardAvoidingView,
     Platform,
     ScrollView,
@@ -22,6 +21,10 @@ import {
     validateName,
     validatePasswordsMatch,
 } from '../../utils/validation';
+import { colors } from '../../styles/colors';
+import { texts } from '../../styles/texts';
+import { scale, verticalScale } from '../../helpers/scaler';
+import VSpacer from '../../components/base/spacer/VSpacer/VSpacer';
 
 type RegisterScreenNavigationProp = StackNavigationProp<AuthStackParamList, 'Register'>;
 
@@ -41,19 +44,16 @@ const RegisterScreen = () => {
     const [confirmPasswordError, setConfirmPasswordError] = useState('');
 
     useEffect(() => {
-        // Clear errors when component mounts
         dispatch(clearError());
     }, [dispatch]);
 
     const handleRegister = () => {
-        // Reset errors
         setNameError('');
         setEmailError('');
         setPasswordError('');
         setConfirmPasswordError('');
         dispatch(clearError());
 
-        // Validate inputs
         const nameValidation = validateName(name);
         const emailValidation = validateEmail(email);
         const passwordValidation = validatePassword(password);
@@ -85,22 +85,32 @@ const RegisterScreen = () => {
             return;
         }
 
-        // Dispatch register action
         dispatch(register({ email, password, name }));
     };
 
     return (
         <KeyboardAvoidingView
-            style={styles.container}
+            style={{ flex: 1, backgroundColor: colors.Others.white }}
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
             <ScrollView
-                contentContainerStyle={styles.scrollContent}
+                contentContainerStyle={{ flexGrow: 1 }}
                 keyboardShouldPersistTaps="handled">
-                <View style={styles.content}>
-                    <Text style={styles.title}>Create Account</Text>
-                    <Text style={styles.subtitle}>Sign up to get started</Text>
+                <View
+                    style={{
+                        flex: 1,
+                        paddingHorizontal: scale(24),
+                        paddingTop: verticalScale(60),
+                    }}>
+                    <Text style={[texts.heading.heading3, { color: colors.Greyscale[900] }]}>
+                        Create Account
+                    </Text>
+                    <VSpacer height={8} />
+                    <Text style={[texts.body.medium.regular, { color: colors.Greyscale[500] }]}>
+                        Sign up to get started
+                    </Text>
+                    <VSpacer height={32} />
 
-                    <View style={styles.form}>
+                    <View style={{ flex: 1 }}>
                         <Input
                             label="Full Name"
                             value={name}
@@ -138,19 +148,37 @@ const RegisterScreen = () => {
                             error={confirmPasswordError}
                         />
 
-                        {error && <Text style={styles.errorText}>{error}</Text>}
+                        {error && (
+                            <Text
+                                style={[
+                                    texts.body.small.regular,
+                                    {
+                                        color: colors.Alert.Error[100],
+                                        textAlign: 'center',
+                                        marginBottom: scale(16),
+                                    },
+                                ]}>
+                                {error}
+                            </Text>
+                        )}
 
-                        <Button
-                            title="Create Account"
-                            onPress={handleRegister}
-                            loading={isLoading}
-                            style={styles.registerButton}
-                        />
+                        <VSpacer height={8} />
+                        <Button title="Create Account" onPress={handleRegister} loading={isLoading} />
 
-                        <View style={styles.loginContainer}>
-                            <Text style={styles.loginText}>Already have an account? </Text>
+                        <VSpacer height={16} />
+                        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+                            <Text
+                                style={[texts.body.small.regular, { color: colors.Greyscale[500] }]}>
+                                Already have an account?{' '}
+                            </Text>
                             <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-                                <Text style={styles.loginLink}>Sign in</Text>
+                                <Text
+                                    style={[
+                                        texts.body.small.semibold,
+                                        { color: colors.primary[500] },
+                                    ]}>
+                                    Sign in
+                                </Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -159,57 +187,5 @@ const RegisterScreen = () => {
         </KeyboardAvoidingView>
     );
 };
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-    },
-    scrollContent: {
-        flexGrow: 1,
-    },
-    content: {
-        flex: 1,
-        paddingHorizontal: 24,
-        paddingTop: 60,
-    },
-    title: {
-        fontSize: 32,
-        fontWeight: 'bold',
-        color: '#333',
-        marginBottom: 8,
-    },
-    subtitle: {
-        fontSize: 16,
-        color: '#666',
-        marginBottom: 40,
-    },
-    form: {
-        flex: 1,
-    },
-    registerButton: {
-        marginTop: 8,
-    },
-    errorText: {
-        fontSize: 14,
-        color: '#ff3b30',
-        marginBottom: 16,
-        textAlign: 'center',
-    },
-    loginContainer: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        marginTop: 24,
-    },
-    loginText: {
-        fontSize: 14,
-        color: '#666',
-    },
-    loginLink: {
-        fontSize: 14,
-        color: '#007AFF',
-        fontWeight: '600',
-    },
-});
 
 export default RegisterScreen;

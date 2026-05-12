@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import {
     View,
     Text,
-    StyleSheet,
     ScrollView,
     TextInput,
     ActivityIndicator,
@@ -10,6 +9,11 @@ import {
 } from 'react-native';
 import Button from '../../components/common/Button';
 import * as interviewService from '../../services/interviewService';
+import { colors } from '../../styles/colors';
+import { texts } from '../../styles/texts';
+import { scale } from '../../helpers/scaler';
+import VSpacer from '../../components/base/spacer/VSpacer/VSpacer';
+import HSpacer from '../../components/base/spacer/HSpacer/HSpacer';
 
 const InterviewScreen = () => {
     const [loading, setLoading] = useState(true);
@@ -27,11 +31,9 @@ const InterviewScreen = () => {
     const initializeInterview = async () => {
         try {
             setLoading(true);
-            // Start session
             const session = await interviewService.startSession('behavioral');
             setSessionId(session.id);
 
-            // Generate first question
             const question = await interviewService.generateQuestion('behavioral', 'medium');
             setCurrentQuestion(question);
         } catch (error: any) {
@@ -48,27 +50,16 @@ const InterviewScreen = () => {
         }
 
         try {
-            console.log('📤 Submitting answer...');
-            console.log('Session ID:', sessionId);
-            console.log('Question ID:', currentQuestion.id);
-            console.log('Answer length:', answer.length);
-
             setSubmitting(true);
             const result = await interviewService.submitAnswer(
                 sessionId,
                 currentQuestion.id,
-                answer
+                answer,
             );
-
-            console.log('✅ Answer submitted successfully');
-            console.log('Feedback received:', result.feedback);
 
             setFeedback(result.feedback);
             setAnswer('');
         } catch (error: any) {
-            console.error('❌ Submit answer error:', error);
-            console.error('Error message:', error.message);
-            console.error('Error response:', error.response?.data);
             Alert.alert('Error', error.message || 'Failed to submit answer');
         } finally {
             setSubmitting(false);
@@ -96,7 +87,7 @@ const InterviewScreen = () => {
             Alert.alert(
                 'Session Complete!',
                 `Average Score: ${result.averageScore.toFixed(1)}/10\nQuestions: ${result.totalQuestions}`,
-                [{ text: 'OK', onPress: () => {/* Navigate back */ } }]
+                [{ text: 'OK', onPress: () => { /* Navigate back */ } }],
             );
         } catch (error: any) {
             Alert.alert('Error', error.message || 'Failed to complete session');
@@ -107,83 +98,201 @@ const InterviewScreen = () => {
 
     if (loading && !currentQuestion) {
         return (
-            <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#007AFF" />
-                <Text style={styles.loadingText}>Preparing your interview...</Text>
+            <View
+                style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: colors.Greyscale[0],
+                }}>
+                <ActivityIndicator size="large" color={colors.primary[500]} />
+                <VSpacer height={16} />
+                <Text style={[texts.body.medium.regular, { color: colors.Greyscale[500] }]}>
+                    Preparing your interview...
+                </Text>
             </View>
         );
     }
 
     return (
-        <ScrollView style={styles.container}>
-            <View style={styles.content}>
+        <ScrollView style={{ flex: 1, backgroundColor: colors.Greyscale[0] }}>
+            <View style={{ padding: scale(20) }}>
                 {/* Progress */}
-                <View style={styles.progressContainer}>
-                    <Text style={styles.progressText}>Question {questionCount}</Text>
+                <View
+                    style={{
+                        backgroundColor: colors.Others.white,
+                        padding: scale(12),
+                        borderRadius: scale(8),
+                        alignItems: 'center',
+                    }}>
+                    <Text style={[texts.body.small.semibold, { color: colors.primary[500] }]}>
+                        Question {questionCount}
+                    </Text>
                 </View>
 
+                <VSpacer height={16} />
                 {/* Question */}
-                <View style={styles.questionCard}>
-                    <Text style={styles.questionLabel}>Question:</Text>
-                    <Text style={styles.questionText}>{currentQuestion?.text}</Text>
+                <View
+                    style={{
+                        backgroundColor: colors.Others.white,
+                        padding: scale(20),
+                        borderRadius: scale(12),
+                    }}>
+                    <Text style={[texts.body.small.semibold, { color: colors.Greyscale[500] }]}>
+                        Question:
+                    </Text>
+                    <VSpacer height={8} />
+                    <Text style={[texts.body.large.semibold, { color: colors.Greyscale[900] }]}>
+                        {currentQuestion?.text}
+                    </Text>
                     {currentQuestion?.context && (
-                        <Text style={styles.contextText}>{currentQuestion.context}</Text>
+                        <>
+                            <VSpacer height={12} />
+                            <Text
+                                style={[
+                                    texts.body.small.regular,
+                                    { color: colors.Greyscale[500], fontStyle: 'italic' },
+                                ]}>
+                                {currentQuestion.context}
+                            </Text>
+                        </>
                     )}
                 </View>
 
+                <VSpacer height={20} />
                 {/* Answer Input or Feedback */}
                 {!feedback ? (
                     <>
-                        <Text style={styles.inputLabel}>Your Answer:</Text>
+                        <Text style={[texts.body.medium.semibold, { color: colors.Greyscale[900] }]}>
+                            Your Answer:
+                        </Text>
+                        <VSpacer height={12} />
                         <TextInput
-                            style={styles.answerInput}
+                            style={[
+                                texts.body.medium.regular,
+                                {
+                                    backgroundColor: colors.Others.white,
+                                    borderRadius: scale(12),
+                                    padding: scale(16),
+                                    color: colors.Greyscale[900],
+                                    minHeight: scale(150),
+                                    borderWidth: scale(1),
+                                    borderColor: colors.Greyscale[200],
+                                },
+                            ]}
                             value={answer}
                             onChangeText={setAnswer}
                             placeholder="Type your answer here..."
+                            placeholderTextColor={colors.Greyscale[400]}
                             multiline
                             numberOfLines={8}
                             textAlignVertical="top"
                         />
+                        <VSpacer height={16} />
                         <Button
                             title="Submit Answer"
                             onPress={handleSubmitAnswer}
                             loading={submitting}
-                            style={styles.submitButton}
                         />
                     </>
                 ) : (
                     <>
                         {/* Feedback Display */}
-                        <View style={styles.feedbackCard}>
-                            <Text style={styles.feedbackTitle}>Feedback</Text>
-                            <View style={styles.scoreContainer}>
-                                <Text style={styles.scoreLabel}>Score:</Text>
-                                <Text style={styles.scoreValue}>{feedback.score}/10</Text>
+                        <View
+                            style={{
+                                backgroundColor: colors.Others.white,
+                                padding: scale(20),
+                                borderRadius: scale(12),
+                            }}>
+                            <Text style={[texts.heading.heading5, { color: colors.Greyscale[900] }]}>
+                                Feedback
+                            </Text>
+                            <VSpacer height={16} />
+                            <View
+                                style={{
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    paddingBottom: scale(16),
+                                    borderBottomWidth: scale(1),
+                                    borderBottomColor: colors.Greyscale[100],
+                                }}>
+                                <Text
+                                    style={[
+                                        texts.body.medium.regular,
+                                        { color: colors.Greyscale[500] },
+                                    ]}>
+                                    Score:
+                                </Text>
+                                <HSpacer width={8} />
+                                <Text
+                                    style={[
+                                        texts.heading.heading3,
+                                        { color: colors.primary[500] },
+                                    ]}>
+                                    {feedback.score}/10
+                                </Text>
                             </View>
 
-                            <Text style={styles.feedbackSectionTitle}>Strengths:</Text>
+                            <VSpacer height={16} />
+                            <Text
+                                style={[
+                                    texts.body.medium.semibold,
+                                    { color: colors.Greyscale[900] },
+                                ]}>
+                                Strengths:
+                            </Text>
+                            <VSpacer height={8} />
                             {feedback.strengths.map((strength: string, index: number) => (
-                                <Text key={index} style={styles.feedbackPoint}>• {strength}</Text>
+                                <Text
+                                    key={index}
+                                    style={[
+                                        texts.body.small.regular,
+                                        {
+                                            color: colors.Greyscale[500],
+                                            marginBottom: scale(6),
+                                        },
+                                    ]}>
+                                    • {strength}
+                                </Text>
                             ))}
 
-                            <Text style={styles.feedbackSectionTitle}>Areas to Improve:</Text>
+                            <VSpacer height={16} />
+                            <Text
+                                style={[
+                                    texts.body.medium.semibold,
+                                    { color: colors.Greyscale[900] },
+                                ]}>
+                                Areas to Improve:
+                            </Text>
+                            <VSpacer height={8} />
                             {feedback.improvements.map((improvement: string, index: number) => (
-                                <Text key={index} style={styles.feedbackPoint}>• {improvement}</Text>
+                                <Text
+                                    key={index}
+                                    style={[
+                                        texts.body.small.regular,
+                                        {
+                                            color: colors.Greyscale[500],
+                                            marginBottom: scale(6),
+                                        },
+                                    ]}>
+                                    • {improvement}
+                                </Text>
                             ))}
                         </View>
 
-                        <View style={styles.buttonRow}>
-                            <Button
-                                title="Next Question"
-                                onPress={handleNextQuestion}
-                                style={styles.nextButton}
-                            />
-                            <Button
-                                title="Complete"
-                                onPress={handleCompleteSession}
-                                variant="secondary"
-                                style={styles.completeButton}
-                            />
+                        <VSpacer height={20} />
+                        <View style={{ flexDirection: 'row' }}>
+                            <View style={{ flex: 1 }}>
+                                <Button title="Next Question" onPress={handleNextQuestion} />
+                            </View>
+                            <HSpacer width={12} />
+                            <View style={{ flex: 1 }}>
+                                <Button
+                                    title="Complete"
+                                    onPress={handleCompleteSession}
+                                    variant="secondary"
+                                />
+                            </View>
                         </View>
                     </>
                 )}
@@ -191,134 +300,5 @@ const InterviewScreen = () => {
         </ScrollView>
     );
 };
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#f5f5f5',
-    },
-    loadingContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#f5f5f5',
-    },
-    loadingText: {
-        marginTop: 16,
-        fontSize: 16,
-        color: '#666',
-    },
-    content: {
-        padding: 20,
-    },
-    progressContainer: {
-        backgroundColor: '#fff',
-        padding: 12,
-        borderRadius: 8,
-        marginBottom: 16,
-        alignItems: 'center',
-    },
-    progressText: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: '#007AFF',
-    },
-    questionCard: {
-        backgroundColor: '#fff',
-        padding: 20,
-        borderRadius: 12,
-        marginBottom: 20,
-    },
-    questionLabel: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: '#666',
-        marginBottom: 8,
-    },
-    questionText: {
-        fontSize: 18,
-        fontWeight: '600',
-        color: '#333',
-        lineHeight: 26,
-    },
-    contextText: {
-        fontSize: 14,
-        color: '#666',
-        marginTop: 12,
-        fontStyle: 'italic',
-    },
-    inputLabel: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#333',
-        marginBottom: 12,
-    },
-    answerInput: {
-        backgroundColor: '#fff',
-        borderRadius: 12,
-        padding: 16,
-        fontSize: 16,
-        minHeight: 150,
-        borderWidth: 1,
-        borderColor: '#ddd',
-        marginBottom: 16,
-    },
-    submitButton: {
-        marginTop: 8,
-    },
-    feedbackCard: {
-        backgroundColor: '#fff',
-        padding: 20,
-        borderRadius: 12,
-        marginBottom: 20,
-    },
-    feedbackTitle: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: '#333',
-        marginBottom: 16,
-    },
-    scoreContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 20,
-        paddingBottom: 16,
-        borderBottomWidth: 1,
-        borderBottomColor: '#E5E5EA',
-    },
-    scoreLabel: {
-        fontSize: 16,
-        color: '#666',
-        marginRight: 8,
-    },
-    scoreValue: {
-        fontSize: 32,
-        fontWeight: 'bold',
-        color: '#007AFF',
-    },
-    feedbackSectionTitle: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#333',
-        marginTop: 16,
-        marginBottom: 8,
-    },
-    feedbackPoint: {
-        fontSize: 14,
-        color: '#666',
-        marginBottom: 6,
-        lineHeight: 20,
-    },
-    buttonRow: {
-        flexDirection: 'row',
-        gap: 12,
-    },
-    nextButton: {
-        flex: 1,
-    },
-    completeButton: {
-        flex: 1,
-    },
-});
 
 export default InterviewScreen;

@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Button from '../../components/common/Button';
+import { colors } from '../../styles/colors';
+import { texts } from '../../styles/texts';
+import { scale } from '../../helpers/scaler';
+import VSpacer from '../../components/base/spacer/VSpacer/VSpacer';
+import HSpacer from '../../components/base/spacer/HSpacer/HSpacer';
 
 const CompanyPrepScreen = () => {
     const navigation = useNavigation();
@@ -19,151 +24,191 @@ const CompanyPrepScreen = () => {
 
     const roles = ['Software Engineer', 'Product Manager', 'Data Scientist', 'Designer'];
 
-    const companyTips = companyName ? {
-        culture: 'Focus on innovation and customer obsession',
-        values: 'Leadership principles and ownership',
-        questions: 'Expect behavioral questions using STAR method',
-    } : null;
+    const companyTips = companyName
+        ? {
+              culture: 'Focus on innovation and customer obsession',
+              values: 'Leadership principles and ownership',
+              questions: 'Expect behavioral questions using STAR method',
+          }
+        : null;
 
     const handleStartPrep = () => {
         if (!companyName) {
-            alert('Please select or enter a company name');
+            Alert.alert('Error', 'Please select or enter a company name');
             return;
         }
-        // Navigate to interview with company context
         navigation.navigate('Interview' as never);
     };
 
+    const renderTipRow = (icon: string, label: string, content: string) => (
+        <View>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: scale(8) }}>
+                <Text style={{ fontSize: scale(20) }}>{icon}</Text>
+                <HSpacer width={8} />
+                <Text style={[texts.body.small.semibold, { color: colors.Greyscale[900] }]}>
+                    {label}
+                </Text>
+            </View>
+            <Text
+                style={[
+                    texts.body.small.regular,
+                    { color: colors.Greyscale[500], marginLeft: scale(28) },
+                ]}>
+                {content}
+            </Text>
+        </View>
+    );
+
     return (
-        <ScrollView style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
-            <View style={{ padding: 20 }}>
+        <ScrollView style={{ flex: 1, backgroundColor: colors.Greyscale[0] }}>
+            <View style={{ padding: scale(20) }}>
                 {/* Header */}
-                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#333', marginBottom: 8 }}>
+                <Text style={[texts.heading.heading4, { color: colors.Greyscale[900] }]}>
                     Company Preparation
                 </Text>
-                <Text style={{ fontSize: 16, color: '#666', marginBottom: 24 }}>
+                <VSpacer height={8} />
+                <Text style={[texts.body.medium.regular, { color: colors.Greyscale[500] }]}>
                     Prepare for interviews at specific companies
                 </Text>
+                <VSpacer height={24} />
 
                 {/* Popular Companies */}
-                <Text style={{ fontSize: 18, fontWeight: '600', color: '#333', marginBottom: 16 }}>
+                <Text style={[texts.heading.heading6, { color: colors.Greyscale[900] }]}>
                     Popular Companies
                 </Text>
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginBottom: 24 }}>
-                    {popularCompanies.map((company) => (
-                        <TouchableOpacity
-                            key={company.id}
-                            onPress={() => setCompanyName(company.name)}
-                            style={{
-                                paddingHorizontal: 20,
-                                paddingVertical: 12,
-                                borderRadius: 20,
-                                backgroundColor: companyName === company.name ? '#007AFF' : '#fff',
-                                borderWidth: 2,
-                                borderColor: companyName === company.name ? '#007AFF' : '#E5E5EA',
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                gap: 8,
-                            }}>
-                            <Text style={{ fontSize: 18 }}>{company.icon}</Text>
-                            <Text style={{
-                                fontSize: 14,
-                                fontWeight: '600',
-                                color: companyName === company.name ? '#fff' : '#333',
-                            }}>
-                                {company.name}
-                            </Text>
-                        </TouchableOpacity>
-                    ))}
+                <VSpacer height={16} />
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: scale(12) }}>
+                    {popularCompanies.map((company) => {
+                        const selected = companyName === company.name;
+                        return (
+                            <TouchableOpacity
+                                key={company.id}
+                                onPress={() => setCompanyName(company.name)}
+                                style={{
+                                    paddingHorizontal: scale(20),
+                                    paddingVertical: scale(12),
+                                    borderRadius: scale(20),
+                                    borderWidth: scale(2),
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    backgroundColor: selected
+                                        ? colors.primary[500]
+                                        : colors.Others.white,
+                                    borderColor: selected
+                                        ? colors.primary[500]
+                                        : colors.Greyscale[100],
+                                }}>
+                                <Text style={{ fontSize: scale(18) }}>{company.icon}</Text>
+                                <HSpacer width={8} />
+                                <Text
+                                    style={[
+                                        texts.body.small.semibold,
+                                        {
+                                            color: selected
+                                                ? colors.Others.white
+                                                : colors.Greyscale[900],
+                                        },
+                                    ]}>
+                                    {company.name}
+                                </Text>
+                            </TouchableOpacity>
+                        );
+                    })}
                 </View>
 
+                <VSpacer height={24} />
                 {/* Custom Company */}
-                <Text style={{ fontSize: 18, fontWeight: '600', color: '#333', marginBottom: 12 }}>
+                <Text style={[texts.heading.heading6, { color: colors.Greyscale[900] }]}>
                     Or Enter Company Name
                 </Text>
+                <VSpacer height={12} />
                 <TextInput
-                    style={{
-                        backgroundColor: '#fff',
-                        borderRadius: 12,
-                        padding: 16,
-                        fontSize: 16,
-                        borderWidth: 1,
-                        borderColor: '#ddd',
-                        marginBottom: 24,
-                    }}
+                    style={[
+                        texts.body.medium.regular,
+                        {
+                            backgroundColor: colors.Others.white,
+                            borderRadius: scale(12),
+                            padding: scale(16),
+                            color: colors.Greyscale[900],
+                            borderWidth: scale(1),
+                            borderColor: colors.Greyscale[200],
+                        },
+                    ]}
                     value={companyName}
                     onChangeText={setCompanyName}
                     placeholder="e.g., Tesla, Stripe, Airbnb..."
-                    placeholderTextColor="#999"
+                    placeholderTextColor={colors.Greyscale[400]}
                 />
 
+                <VSpacer height={24} />
                 {/* Role Selection */}
-                <Text style={{ fontSize: 18, fontWeight: '600', color: '#333', marginBottom: 12 }}>
+                <Text style={[texts.heading.heading6, { color: colors.Greyscale[900] }]}>
                     Target Role (Optional)
                 </Text>
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 24 }}>
-                    {roles.map((role) => (
-                        <TouchableOpacity
-                            key={role}
-                            onPress={() => setSelectedRole(role)}
-                            style={{
-                                paddingHorizontal: 16,
-                                paddingVertical: 10,
-                                borderRadius: 16,
-                                backgroundColor: selectedRole === role ? '#34C759' : '#fff',
-                                borderWidth: 1,
-                                borderColor: selectedRole === role ? '#34C759' : '#E5E5EA',
-                            }}>
-                            <Text style={{
-                                fontSize: 13,
-                                fontWeight: '600',
-                                color: selectedRole === role ? '#fff' : '#666',
-                            }}>
-                                {role}
-                            </Text>
-                        </TouchableOpacity>
-                    ))}
+                <VSpacer height={12} />
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: scale(8) }}>
+                    {roles.map((role) => {
+                        const selected = selectedRole === role;
+                        return (
+                            <TouchableOpacity
+                                key={role}
+                                onPress={() => setSelectedRole(role)}
+                                style={{
+                                    paddingHorizontal: scale(16),
+                                    paddingVertical: scale(10),
+                                    borderRadius: scale(16),
+                                    borderWidth: scale(1),
+                                    backgroundColor: selected
+                                        ? colors.Alert.Success[100]
+                                        : colors.Others.white,
+                                    borderColor: selected
+                                        ? colors.Alert.Success[100]
+                                        : colors.Greyscale[100],
+                                }}>
+                                <Text
+                                    style={[
+                                        texts.body.extraSmall.semibold,
+                                        {
+                                            color: selected
+                                                ? colors.Others.white
+                                                : colors.Greyscale[500],
+                                        },
+                                    ]}>
+                                    {role}
+                                </Text>
+                            </TouchableOpacity>
+                        );
+                    })}
                 </View>
 
                 {/* Company Tips */}
                 {companyTips && (
-                    <View style={{ backgroundColor: '#fff', padding: 20, borderRadius: 12, marginBottom: 24 }}>
-                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#333', marginBottom: 16 }}>
-                            {companyName} Interview Tips
-                        </Text>
-
-                        <View style={{ marginBottom: 16 }}>
-                            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
-                                <Text style={{ fontSize: 20, marginRight: 8 }}>🏢</Text>
-                                <Text style={{ fontSize: 14, fontWeight: '600', color: '#333' }}>Culture</Text>
-                            </View>
-                            <Text style={{ fontSize: 14, color: '#666', marginLeft: 28 }}>
-                                {companyTips.culture}
+                    <>
+                        <VSpacer height={24} />
+                        <View
+                            style={{
+                                backgroundColor: colors.Others.white,
+                                padding: scale(20),
+                                borderRadius: scale(12),
+                            }}>
+                            <Text
+                                style={[
+                                    texts.heading.heading6,
+                                    { color: colors.Greyscale[900] },
+                                ]}>
+                                {companyName} Interview Tips
                             </Text>
+                            <VSpacer height={16} />
+                            {renderTipRow('🏢', 'Culture', companyTips.culture)}
+                            <VSpacer height={16} />
+                            {renderTipRow('⭐', 'Values', companyTips.values)}
+                            <VSpacer height={16} />
+                            {renderTipRow('💡', 'Interview Style', companyTips.questions)}
                         </View>
-
-                        <View style={{ marginBottom: 16 }}>
-                            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
-                                <Text style={{ fontSize: 20, marginRight: 8 }}>⭐</Text>
-                                <Text style={{ fontSize: 14, fontWeight: '600', color: '#333' }}>Values</Text>
-                            </View>
-                            <Text style={{ fontSize: 14, color: '#666', marginLeft: 28 }}>
-                                {companyTips.values}
-                            </Text>
-                        </View>
-
-                        <View>
-                            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
-                                <Text style={{ fontSize: 20, marginRight: 8 }}>💡</Text>
-                                <Text style={{ fontSize: 14, fontWeight: '600', color: '#333' }}>Interview Style</Text>
-                            </View>
-                            <Text style={{ fontSize: 14, color: '#666', marginLeft: 28 }}>
-                                {companyTips.questions}
-                            </Text>
-                        </View>
-                    </View>
+                    </>
                 )}
 
+                <VSpacer height={24} />
                 {/* Start Button */}
                 <Button
                     title={`Start ${companyName || 'Company'} Interview Prep`}

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
     View,
     Text,
@@ -11,6 +11,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { RootState, AppDispatch } from '../../store';
 import { logout } from '../../store/slices/authSlice';
+import { colors } from '../../styles/colors';
+import { texts } from '../../styles/texts';
+import shadowStyles from '../../styles/shadow';
+import { scale } from '../../helpers/scaler';
+import VSpacer from '../../components/base/spacer/VSpacer/VSpacer';
+import HSpacer from '../../components/base/spacer/HSpacer/HSpacer';
 
 const HomeScreen = () => {
     const navigation = useNavigation();
@@ -28,11 +34,8 @@ const HomeScreen = () => {
     };
 
     const handleStartInterview = () => {
-        console.log('🎯 Start Interview button pressed!');
         Alert.alert('Button Pressed!', 'Navigating to Interview...');
-        // Navigate to Interview tab
         navigation.navigate('Interview' as never);
-        console.log('📍 Navigation called');
     };
 
     const stats = {
@@ -48,77 +51,163 @@ const HomeScreen = () => {
         { id: '3', type: 'Behavioral', score: 9.2, date: '2 days ago', questionsCount: 6 },
     ];
 
+    const renderStatCard = (value: string | number, label: string) => (
+        <View
+            style={[
+                {
+                    flex: 1,
+                    backgroundColor: colors.Others.white,
+                    padding: scale(20),
+                    borderRadius: scale(12),
+                    alignItems: 'center',
+                },
+                shadowStyles.Medium,
+            ]}>
+            <Text style={[texts.heading.heading3, { color: colors.primary[500] }]}>{value}</Text>
+            <VSpacer height={4} />
+            <Text style={[texts.body.small.regular, { color: colors.Greyscale[500] }]}>{label}</Text>
+        </View>
+    );
+
     return (
         <ScrollView
-            style={{ flex: 1, backgroundColor: '#f5f5f5' }}
+            style={{ flex: 1, backgroundColor: colors.Greyscale[0] }}
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
 
             {/* Header */}
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 20, backgroundColor: '#fff' }}>
+            <View
+                style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: scale(20),
+                    backgroundColor: colors.Others.white,
+                }}>
                 <View>
-                    <Text style={{ fontSize: 16, color: '#666' }}>Hello,</Text>
-                    <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#333', marginTop: 4 }}>{user?.name || 'User'}</Text>
+                    <Text style={[texts.body.medium.regular, { color: colors.Greyscale[500] }]}>
+                        Hello,
+                    </Text>
+                    <VSpacer height={4} />
+                    <Text style={[texts.heading.heading4, { color: colors.Greyscale[900] }]}>
+                        {user?.name || 'User'}
+                    </Text>
                 </View>
-                <TouchableOpacity onPress={handleLogout} style={{ paddingHorizontal: 16, paddingVertical: 8, borderRadius: 8, borderWidth: 1, borderColor: '#ff3b30' }}>
-                    <Text style={{ color: '#ff3b30', fontSize: 14, fontWeight: '600' }}>Logout</Text>
+                <TouchableOpacity
+                    onPress={handleLogout}
+                    style={{
+                        paddingHorizontal: scale(16),
+                        paddingVertical: scale(8),
+                        borderRadius: scale(8),
+                        borderWidth: scale(1),
+                        borderColor: colors.Alert.Error[100],
+                    }}>
+                    <Text style={[texts.body.small.semibold, { color: colors.Alert.Error[100] }]}>
+                        Logout
+                    </Text>
                 </TouchableOpacity>
             </View>
 
             {/* Stats Cards */}
-            <View style={{ flexDirection: 'row', paddingHorizontal: 20, marginTop: 16, gap: 12 }}>
-                <View style={{ flex: 1, backgroundColor: '#fff', padding: 20, borderRadius: 12, alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4, elevation: 3 }}>
-                    <Text style={{ fontSize: 32, fontWeight: 'bold', color: '#007AFF' }}>{stats.totalSessions}</Text>
-                    <Text style={{ fontSize: 14, color: '#666', marginTop: 4 }}>Total Sessions</Text>
-                </View>
-                <View style={{ flex: 1, backgroundColor: '#fff', padding: 20, borderRadius: 12, alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4, elevation: 3 }}>
-                    <Text style={{ fontSize: 32, fontWeight: 'bold', color: '#007AFF' }}>{stats.averageScore}</Text>
-                    <Text style={{ fontSize: 14, color: '#666', marginTop: 4 }}>Avg Score</Text>
-                </View>
+            <VSpacer height={16} />
+            <View style={{ flexDirection: 'row', paddingHorizontal: scale(20) }}>
+                {renderStatCard(stats.totalSessions, 'Total Sessions')}
+                <HSpacer width={12} />
+                {renderStatCard(stats.averageScore, 'Avg Score')}
             </View>
 
-            <View style={{ flexDirection: 'row', paddingHorizontal: 20, marginTop: 16, gap: 12 }}>
-                <View style={{ flex: 1, backgroundColor: '#fff', padding: 20, borderRadius: 12, alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4, elevation: 3 }}>
-                    <Text style={{ fontSize: 32, fontWeight: 'bold', color: '#007AFF' }}>{stats.dailyStreak}</Text>
-                    <Text style={{ fontSize: 14, color: '#666', marginTop: 4 }}>Day Streak</Text>
-                </View>
-                <View style={{ flex: 1, backgroundColor: '#fff', padding: 20, borderRadius: 12, alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4, elevation: 3 }}>
-                    <Text style={{ fontSize: 32, fontWeight: 'bold', color: '#007AFF' }}>{stats.completedToday}</Text>
-                    <Text style={{ fontSize: 14, color: '#666', marginTop: 4 }}>Today</Text>
-                </View>
+            <VSpacer height={16} />
+            <View style={{ flexDirection: 'row', paddingHorizontal: scale(20) }}>
+                {renderStatCard(stats.dailyStreak, 'Day Streak')}
+                <HSpacer width={12} />
+                {renderStatCard(stats.completedToday, 'Today')}
             </View>
 
             {/* Quick Start Button */}
-            <TouchableOpacity onPress={handleStartInterview} style={{ backgroundColor: '#007AFF', marginHorizontal: 20, marginTop: 24, padding: 16, borderRadius: 12, alignItems: 'center' }}>
-                <Text style={{ color: '#fff', fontSize: 18, fontWeight: '600' }}>Start New Interview</Text>
+            <VSpacer height={24} />
+            <TouchableOpacity
+                onPress={handleStartInterview}
+                style={{
+                    backgroundColor: colors.primary[500],
+                    marginHorizontal: scale(20),
+                    padding: scale(16),
+                    borderRadius: scale(12),
+                    alignItems: 'center',
+                }}>
+                <Text style={[texts.body.large.semibold, { color: colors.Others.white }]}>
+                    Start New Interview
+                </Text>
             </TouchableOpacity>
 
             {/* Recent Sessions */}
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, marginTop: 32, marginBottom: 16 }}>
-                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#333' }}>Recent Sessions</Text>
+            <VSpacer height={32} />
+            <View
+                style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    paddingHorizontal: scale(20),
+                }}>
+                <Text style={[texts.heading.heading5, { color: colors.Greyscale[900] }]}>
+                    Recent Sessions
+                </Text>
                 <TouchableOpacity>
-                    <Text style={{ fontSize: 14, color: '#007AFF', fontWeight: '600' }}>See All</Text>
+                    <Text style={[texts.body.small.semibold, { color: colors.primary[500] }]}>
+                        See All
+                    </Text>
                 </TouchableOpacity>
             </View>
+            <VSpacer height={16} />
 
             {recentSessions.map((session) => (
-                <TouchableOpacity key={session.id} style={{ backgroundColor: '#fff', marginHorizontal: 20, marginBottom: 12, padding: 16, borderRadius: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2, elevation: 2 }}>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                        <Text style={{ fontSize: 16, fontWeight: '600', color: '#333' }}>{session.type}</Text>
-                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#007AFF' }}>{session.score}/10</Text>
+                <TouchableOpacity
+                    key={session.id}
+                    style={[
+                        {
+                            backgroundColor: colors.Others.white,
+                            marginHorizontal: scale(20),
+                            marginBottom: scale(12),
+                            padding: scale(16),
+                            borderRadius: scale(12),
+                        },
+                        shadowStyles.Small,
+                    ]}>
+                    <View
+                        style={{
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                        }}>
+                        <Text style={[texts.body.medium.semibold, { color: colors.Greyscale[900] }]}>
+                            {session.type}
+                        </Text>
+                        <Text style={[texts.body.medium.bold, { color: colors.primary[500] }]}>
+                            {session.score}/10
+                        </Text>
                     </View>
+                    <VSpacer height={8} />
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                        <Text style={{ fontSize: 14, color: '#666' }}>{session.questionsCount} questions</Text>
-                        <Text style={{ fontSize: 14, color: '#999' }}>{session.date}</Text>
+                        <Text style={[texts.body.small.regular, { color: colors.Greyscale[500] }]}>
+                            {session.questionsCount} questions
+                        </Text>
+                        <Text style={[texts.body.small.regular, { color: colors.Greyscale[400] }]}>
+                            {session.date}
+                        </Text>
                     </View>
                 </TouchableOpacity>
             ))}
 
             {recentSessions.length === 0 && (
-                <View style={{ alignItems: 'center', paddingVertical: 40 }}>
-                    <Text style={{ fontSize: 18, fontWeight: '600', color: '#666' }}>No sessions yet</Text>
-                    <Text style={{ fontSize: 14, color: '#999', marginTop: 8 }}>Start your first interview to see results here</Text>
+                <View style={{ alignItems: 'center', paddingVertical: scale(40) }}>
+                    <Text style={[texts.body.large.semibold, { color: colors.Greyscale[500] }]}>
+                        No sessions yet
+                    </Text>
+                    <VSpacer height={8} />
+                    <Text style={[texts.body.small.regular, { color: colors.Greyscale[400] }]}>
+                        Start your first interview to see results here
+                    </Text>
                 </View>
             )}
+            <VSpacer height={24} />
         </ScrollView>
     );
 };
