@@ -1,12 +1,12 @@
 import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig } from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { logger } from '../utils/logger';
 
-// Base URL - Update this with your backend URL
 const API_BASE_URL = __DEV__
-    ? 'http://10.205.221.130:3000/api'  // Physical device - use computer's IP address
-    : 'https://your-production-url.com/api';  // Production
+    ? 'http://10.205.221.130:3000/api'
+    : 'https://your-production-url.com/api';
 
-console.log('🌐 API Base URL:', API_BASE_URL);
+logger.debug('API Base URL:', API_BASE_URL);
 
 // Create axios instance
 const api: AxiosInstance = axios.create({
@@ -20,8 +20,7 @@ const api: AxiosInstance = axios.create({
 // Request interceptor - Add auth token
 api.interceptors.request.use(
     async (config: InternalAxiosRequestConfig) => {
-        console.log('📤 API Request:', config.method?.toUpperCase(), config.url);
-        console.log('📍 Full URL:', config.baseURL + config.url);
+        logger.debug('API Request:', config.method?.toUpperCase(), config.url);
         const token = await AsyncStorage.getItem('accessToken');
         if (token && config.headers) {
             config.headers.Authorization = `Bearer ${token}`;
@@ -29,7 +28,7 @@ api.interceptors.request.use(
         return config;
     },
     (error) => {
-        console.error('❌ Request Error:', error);
+        logger.error('Request Error:', error);
         return Promise.reject(error);
     }
 );
@@ -54,10 +53,12 @@ api.interceptors.response.use(
                         refreshToken,
                     });
 
-                    const { accessToken } = response.data.data;
+                    const { accessToken, refreshToken: rotatedRefreshToken } = response.data.data;
 
-                    // Save new access token
                     await AsyncStorage.setItem('accessToken', accessToken);
+                    if (rotatedRefreshToken) {
+                        await AsyncStorage.setItem('refreshToken', rotatedRefreshToken);
+                    }
 
                     // Retry original request with new token
                     if (originalRequest.headers) {

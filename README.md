@@ -1,318 +1,220 @@
-# 🎯 AI-Powered Interview Preparation Coach
+# AI Interview Prep Coach
 
-[![React Native](https://img.shields.io/badge/React%20Native-0.76.6-61DAFB?logo=react)](https://reactnative.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178C6?logo=typescript)](https://www.typescriptlang.org/)
-[![Node.js](https://img.shields.io/badge/Node.js-18+-339933?logo=node.js)](https://nodejs.org/)
+A full-stack mobile app for AI-driven interview practice. React Native client, Node + Express + Prisma + Postgres backend, Google Gemini for question generation and feedback.
+
+[![React Native](https://img.shields.io/badge/React%20Native-0.83-61DAFB?logo=react)](https://reactnative.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?logo=typescript)](https://www.typescriptlang.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-20+-339933?logo=node.js)](https://nodejs.org/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15+-4169E1?logo=postgresql)](https://www.postgresql.org/)
-[![Google Gemini](https://img.shields.io/badge/Google%20Gemini-AI-4285F4?logo=google)](https://ai.google.dev/)
 
-> A comprehensive full-stack mobile application that leverages AI to help job seekers ace their interviews through intelligent question generation, real-time feedback, and personalized coaching.
-
----
-
-## 📱 Overview
-
-AI Interview Prep Coach is a production-ready mobile application built with React Native and Node.js that transforms interview preparation using Google's Gemini AI. The platform provides personalized interview practice across behavioral, technical, and company-specific scenarios with real-time AI-driven feedback and performance analytics.
-
-### 🎥 Demo
-> *Add screenshots or demo video here*
+> Work in progress. See [docs/IMPROVEMENTS.md](docs/IMPROVEMENTS.md) for the active roadmap.
 
 ---
 
-## ✨ Key Features
+## What it does today
 
-### 🤖 AI-Powered Intelligence
-- **Smart Question Generation**: 1000+ unique interview questions across 15+ categories
-- **Real-Time Feedback**: Instant AI evaluation using Google Gemini API with 95% accuracy
-- **STAR Method Analysis**: Structured feedback on Situation, Task, Action, Result framework
-- **Adaptive Difficulty**: Questions tailored to user skill level and interview type
+- **Auth:** email/password registration and login. JWT access tokens + refresh-token rotation. Tokens persisted to AsyncStorage.
+- **Interview flow:** pick a session type, get an AI-generated question, submit an answer, get AI feedback, see a session summary.
+- **Daily challenge:** dedicated daily-question screen.
+- **Profile and progress:** basic user profile and progress screen wired to Redux.
 
-### 📊 Performance Tracking
-- **Progress Dashboard**: Real-time analytics tracking 10+ performance metrics
-- **Session History**: Complete interview session records with detailed feedback
-- **Performance Insights**: Behavioral vs Technical score breakdowns
-- **Streak Tracking**: Daily practice streaks with gamification
+### Implemented surface area
 
-### 🎮 Gamification & Engagement
-- **Achievement System**: 25+ badges for milestones and accomplishments
-- **Daily Challenges**: Fresh interview questions every day
-- **Leaderboards**: Compare progress with community (planned)
+- 6 mobile screens: Login, Register, Home, Interview (Setup/Active/Summary), DailyChallenge, Profile, Progress.
+- 2 Redux Toolkit slices: `auth`, `interview`.
+- 7 Prisma models: `User`, `Resume`, `Question`, `InterviewSession`, `Answer`, `Feedback`, `UserStats`, `DailyChallenge`.
+- 5 API route groups: register, login, refresh, profile, logout; plus interview routes.
 
-### 🎯 Personalization
-- **Resume-Based Questions**: ML-powered resume parsing for targeted preparation
-- **Company-Specific Prep**: Tailored questions for target companies
-- **Custom Interview Types**: Behavioral, Technical, System Design, and more
+### Not yet implemented (called out so the README doesn't oversell)
 
-### 🔐 Enterprise-Grade Security
-- **JWT Authentication**: Secure token-based authentication with refresh tokens
-- **Bcrypt Encryption**: Password hashing with 10 salt rounds
-- **Role-Based Access**: Protected routes and data isolation
+- Voice-to-text answers (`Answer.transcription` column exists, no audio capture yet).
+- Resume PDF upload and parsing (`Resume` model exists, no upload endpoint).
+- Achievement badges (only the `UserStats.badges` column exists).
+- Leaderboards.
+- Streaming feedback.
+- Caching layer (Redis).
+- Production deploy / Docker / CI.
+
+The active list lives in [docs/IMPROVEMENTS.md](docs/IMPROVEMENTS.md).
 
 ---
 
-## 🛠️ Tech Stack
+## Tech stack
 
-### Frontend (Mobile)
-```
-React Native 0.76.6    │ Cross-platform mobile framework
-TypeScript 5.0+        │ Type-safe development
-Redux Toolkit          │ Centralized state management (15+ slices)
-React Navigation 7.x   │ Stack & Tab navigation
-Axios                  │ HTTP client for API calls
-AsyncStorage           │ Persistent local storage
-```
+### Mobile (`/`)
+- React Native 0.83, TypeScript
+- Redux Toolkit + redux-persist (persist not yet wired)
+- React Navigation 7 (stack + bottom tabs)
+- Axios with interceptors for auth + refresh-token rotation
+- AsyncStorage for tokens
+- Reanimated + gesture-handler (installed, light usage so far)
 
-### Backend (Server)
-```
-Node.js 18+            │ JavaScript runtime
-Express.js 4.x         │ Web application framework
-TypeScript 5.0+        │ Type-safe server development
-Prisma ORM 6.x         │ Database ORM with type safety
-PostgreSQL 15+         │ Relational database (Neon hosted)
-Google Gemini API      │ AI question generation & feedback
-JWT & Bcrypt           │ Authentication & encryption
-```
-
-### DevOps & Tools
-```
-Git & GitHub           │ Version control
-Nodemon                │ Development auto-reload
-ESLint & Prettier      │ Code quality & formatting
-Postman                │ API testing
-```
+### Backend (`backend/`)
+- Node 20, Express 4, TypeScript
+- Prisma ORM + PostgreSQL
+- Google Gemini SDK for question generation and feedback
+- JWT (access + refresh, with rotation) and bcrypt
+- `express-rate-limit` and `express-validator` (installed; not yet applied across all routes)
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
-### System Design
 ```
-┌─────────────────┐
-│  React Native   │
-│   Mobile App    │
-└────────┬────────┘
-         │ REST API
-         │ (Axios)
-┌────────▼────────┐
-│   Express.js    │
-│   Backend API   │
-└────────┬────────┘
+┌──────────────────┐
+│  React Native    │  Redux (auth, interview slices)
+│   Mobile App     │  axios w/ refresh-token interceptor
+└────────┬─────────┘
+         │ REST / JSON
+┌────────▼─────────┐
+│  Express API     │  routes ▶ controllers ▶ services
+│  (TypeScript)    │  auth middleware (JWT)
+└────────┬─────────┘
          │
-    ┌────┴────┬──────────┐
-    │         │          │
-┌───▼───┐ ┌──▼──┐  ┌───▼────┐
-│Prisma │ │ JWT │  │ Gemini │
-│  ORM  │ │Auth │  │   AI   │
-└───┬───┘ └─────┘  └────────┘
+    ┌────┴────┬────────────┐
+┌───▼───┐ ┌───▼────┐   ┌───▼────┐
+│Prisma │ │ Gemini │   │  JWT   │
+│  ORM  │ │   AI   │   │ utils  │
+└───┬───┘ └────────┘   └────────┘
     │
-┌───▼──────────┐
-│ PostgreSQL   │
-│   Database   │
-└──────────────┘
+┌───▼───────────┐
+│  PostgreSQL   │
+└───────────────┘
 ```
 
-### Database Schema
-- **12+ Normalized Tables**: Users, Sessions, Questions, Answers, Feedback, Stats, etc.
-- **Efficient Indexing**: Optimized queries with sub-100ms response times
-- **Referential Integrity**: Cascade deletes and foreign key constraints
+### Data model
+Seven tables today: `users`, `resumes`, `questions`, `interview_sessions`, `answers`, `feedback`, `user_stats`, `daily_challenges`. Cascade deletes from `User` to user-owned rows.
 
 ---
 
-## 📈 Performance Metrics
+## Getting started
 
-| Metric | Value |
-|--------|-------|
-| **API Uptime** | 99.9% |
-| **Query Response Time** | < 100ms |
-| **Concurrent Users** | 50+ sessions |
-| **AI Accuracy** | 95% |
-| **Render Performance** | 40% faster with Redux optimization |
-| **JWT Processing** | 500+ tokens/day |
+### Prereqs
+- Node ≥ 20
+- PostgreSQL ≥ 15 (Neon works)
+- React Native CLI + Android Studio / Xcode
+- Google Gemini API key
 
----
+### Backend
 
-## 🚀 Getting Started
-
-### Prerequisites
-```bash
-Node.js >= 18.0.0
-npm >= 9.0.0
-PostgreSQL >= 15.0
-React Native CLI
-Android Studio / Xcode
-Google Gemini API Key
-```
-
-### Installation
-
-#### 1️⃣ Clone Repository
-```bash
-git clone https://github.com/Anmolzezx/AI-Interview-Prep-Coach.git
-cd AI-Interview-Prep-Coach
-```
-
-#### 2️⃣ Backend Setup
 ```bash
 cd backend
 npm install
-
-# Create .env file
-cp .env.example .env
-# Add your credentials:
-# - DATABASE_URL (PostgreSQL connection string)
-# - GEMINI_API_KEY (Google AI Studio)
-# - JWT_SECRET
-
-# Run Prisma migrations
+cp .env.example .env   # set DATABASE_URL, GEMINI_API_KEY, JWT_SECRET, REFRESH_TOKEN_SECRET
 npx prisma migrate dev
 npx prisma generate
-
-# Start backend server
 npm run dev
 ```
 
-#### 3️⃣ Mobile App Setup
+### Mobile
+
 ```bash
-cd ../mobile
 npm install
+npm run android        # or: npm run ios (run pod install first)
+```
 
-# For Android
-npm run android
+Update `API_BASE_URL` in [src/services/api.ts](src/services/api.ts) so the device can reach your backend (LAN IP for a physical device).
 
-# For iOS
-cd ios && pod install && cd ..
-npm run ios
+---
+
+## API surface
+
+### Auth
+```
+POST   /api/auth/register     # email, password, name → user + tokens
+POST   /api/auth/login        # email, password       → user + tokens
+POST   /api/auth/refresh      # refreshToken          → new access + rotated refresh
+GET    /api/auth/profile      # (auth)                → user
+POST   /api/auth/logout       # (auth)                → ok
+```
+
+### Interview
+```
+POST   /api/interview/start
+POST   /api/interview/question/generate
+POST   /api/interview/:sessionId/answer
+POST   /api/interview/:sessionId/complete
+GET    /api/interview/:sessionId/feedback
+```
+
+### Misc
+```
+GET    /health                # liveness probe
+GET    /api                   # version banner
 ```
 
 ---
 
-## 📁 Project Structure
+## Tests
+
+```bash
+# Mobile
+npm test
+# 15 tests across authSlice, interviewSlice, and App smoke render.
+
+# Backend
+cd backend && npm test
+# 28 tests across auth routes (register/login/refresh) and validators.
+```
+
+Test layout:
+- Mobile: `src/store/slices/__tests__/`
+- Backend: `backend/src/__tests__/`
+
+---
+
+## Project layout
 
 ```
-AI-Interview-Prep-Coach/
+/
+├── App.tsx
+├── src/
+│   ├── screens/          auth, home, interview, challenge, profile, progress
+│   ├── components/       base, common
+│   ├── navigation/       App / Auth / Main navigators
+│   ├── services/         api.ts, authService, interviewService
+│   ├── store/            slices/ (auth, interview)
+│   ├── styles/           shared styles
+│   ├── types/            shared TS types
+│   └── utils/            logger, validation
 ├── backend/
 │   ├── src/
-│   │   ├── controllers/      # Request handlers
-│   │   ├── routes/            # API routes
-│   │   ├── services/          # Business logic (Gemini, Prompts)
-│   │   ├── middleware/        # Auth, error handling
-│   │   ├── utils/             # Helpers (JWT, Prisma)
-│   │   └── server.ts          # Express app entry
-│   ├── prisma/
-│   │   └── schema.prisma      # Database schema
-│   └── package.json
-│
-└── mobile/
-    ├── src/
-    │   ├── screens/           # UI screens
-    │   ├── components/        # Reusable components
-    │   ├── navigation/        # Navigation config
-    │   ├── services/          # API calls
-    │   ├── store/             # Redux slices
-    │   └── types/             # TypeScript types
-    └── package.json
+│   │   ├── app.ts            express app factory (used by tests + server)
+│   │   ├── server.ts         boot script
+│   │   ├── routes/
+│   │   ├── controllers/
+│   │   ├── services/         authService, geminiService, promptService
+│   │   ├── middleware/       auth, errorHandler
+│   │   └── utils/            jwt, prisma, validators
+│   ├── prisma/               schema.prisma + migrations + seed.ts
+│   └── scripts/              listModels.ts (Gemini connectivity check)
+└── docs/
+    └── IMPROVEMENTS.md       active improvement plan
 ```
 
 ---
 
-## 🔑 Environment Variables
+## Roadmap
 
-### Backend `.env`
-```env
-DATABASE_URL="postgresql://user:password@host:5432/dbname"
-GEMINI_API_KEY="your_gemini_api_key"
-JWT_SECRET="your_jwt_secret"
-JWT_EXPIRES_IN="7d"
-REFRESH_TOKEN_SECRET="your_refresh_secret"
-REFRESH_TOKEN_EXPIRES_IN="30d"
-PORT=3000
-NODE_ENV="development"
-```
+Tracked in [docs/IMPROVEMENTS.md](docs/IMPROVEMENTS.md). High-level next steps:
+
+1. Finish wiring `redux-persist` (or remove it).
+2. Resume upload + Gemini-driven parsing.
+3. Voice answers with Whisper / Gemini audio.
+4. Dockerize backend, GitHub Actions CI, deploy somewhere public.
+5. Streaming feedback (SSE) + Redis cache for Gemini responses.
 
 ---
 
-## 🎯 API Endpoints
-
-### Authentication
-```
-POST   /api/auth/register      # User registration
-POST   /api/auth/login         # User login
-POST   /api/auth/refresh       # Refresh access token
-```
-
-### Interview Sessions
-```
-POST   /api/interview/start                    # Start new session
-POST   /api/interview/question/generate        # Generate AI question
-POST   /api/interview/:sessionId/answer        # Submit answer
-POST   /api/interview/:sessionId/complete      # Complete session
-GET    /api/interview/:sessionId/feedback      # Get feedback
-```
-
----
-
-## 🧪 Testing
-
-```bash
-# Backend tests
-cd backend
-npm test
-
-# Mobile tests
-cd mobile
-npm test
-```
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Please follow these steps:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit changes (`git commit -m 'Add AmazingFeature'`)
-4. Push to branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## 👨‍💻 Author
+## Author
 
 **Anmol Singh**
-
 - Portfolio: [anmoldevshowcase.vercel.app](https://anmoldevshowcase.vercel.app)
 - LinkedIn: [linkedin.com/in/anmolsingh2060](https://www.linkedin.com/in/anmolsingh2060)
 - GitHub: [@Anmolzezx](https://github.com/Anmolzezx)
-- Email: anmolsingh80413@gmail.com
 
 ---
 
-## 🙏 Acknowledgments
+## License
 
-- Google Gemini AI for intelligent question generation
-- Neon for PostgreSQL hosting
-- React Native community for excellent documentation
-- All contributors and testers
-
----
-
-## 📊 Project Stats
-
-![GitHub stars](https://img.shields.io/github/stars/Anmolzezx/AI-Interview-Prep-Coach?style=social)
-![GitHub forks](https://img.shields.io/github/forks/Anmolzezx/AI-Interview-Prep-Coach?style=social)
-![GitHub issues](https://img.shields.io/github/issues/Anmolzezx/AI-Interview-Prep-Coach)
-
----
-
-<div align="center">
-  <strong>⭐ Star this repo if you find it helpful!</strong>
-  <br>
-  <sub>Built with ❤️ by Anmol Singh</sub>
-</div>
+MIT.

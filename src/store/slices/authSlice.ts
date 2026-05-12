@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as authService from '../../services/authService';
+import { logger } from '../../utils/logger';
 import { User, AuthResponse } from '../../types';
 
 interface AuthState {
@@ -26,16 +27,12 @@ export const login = createAsyncThunk(
     'auth/login',
     async ({ email, password }: { email: string; password: string }, { rejectWithValue }) => {
         try {
-            console.log('🔐 Login attempt:', email);
             const response = await authService.login(email, password);
-            console.log('✅ Login successful:', response.user.email);
-            // Save tokens to AsyncStorage
             await AsyncStorage.setItem('accessToken', response.accessToken);
             await AsyncStorage.setItem('refreshToken', response.refreshToken);
-            console.log('💾 Tokens saved to storage');
             return response;
         } catch (error: any) {
-            console.error('❌ Login failed:', error.message);
+            logger.error('Login failed:', error.message);
             return rejectWithValue(error.message || 'Login failed');
         }
     }

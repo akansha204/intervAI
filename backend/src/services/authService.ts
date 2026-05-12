@@ -121,14 +121,14 @@ export const loginUser = async (email: string, password: string): Promise<AuthRe
 };
 
 /**
- * Refresh access token
+ * Refresh access token. Also rotates the refresh token to limit replay if one leaks.
  */
-export const refreshAccessToken = async (refreshToken: string): Promise<{ accessToken: string }> => {
+export const refreshAccessToken = async (
+    refreshToken: string
+): Promise<{ accessToken: string; refreshToken: string }> => {
     try {
-        // Verify refresh token
         const payload = verifyRefreshToken(refreshToken);
 
-        // Check if user still exists
         const user = await prisma.user.findUnique({
             where: { id: payload.userId },
         });
@@ -137,10 +137,10 @@ export const refreshAccessToken = async (refreshToken: string): Promise<{ access
             throw new Error('User not found');
         }
 
-        // Generate new access token
         const accessToken = generateAccessToken(user.id, user.email);
+        const newRefreshToken = generateRefreshToken(user.id, user.email);
 
-        return { accessToken };
+        return { accessToken, refreshToken: newRefreshToken };
     } catch (error) {
         throw new Error('Invalid refresh token');
     }
