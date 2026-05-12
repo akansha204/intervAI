@@ -7,11 +7,15 @@ import InterviewScreen from '../screens/interview/InterviewScreen';
 import SessionSummaryScreen from '../screens/interview/SessionSummaryScreen';
 import ProgressScreen from '../screens/progress/ProgressScreen';
 import ProfileScreen from '../screens/profile/ProfileScreen';
+import CompanyPrepScreen from '../screens/company/CompanyPrepScreen';
+import FeedbackDetailScreen from '../screens/feedback/FeedbackDetailScreen';
+import ResumeInputScreen from '../screens/resume/ResumeInputScreen';
 import { MainTabParamList } from '../types';
 import { colors } from '../styles/colors';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 const InterviewStack = createStackNavigator();
+const ProfileStack = createStackNavigator();
 
 function InterviewStackNavigator() {
     return (
@@ -20,6 +24,11 @@ function InterviewStackNavigator() {
                 name="InterviewSetup"
                 component={InterviewSetupScreen}
                 options={{ title: 'Start Interview' }}
+            />
+            <InterviewStack.Screen
+                name="CompanyPrep"
+                component={CompanyPrepScreen}
+                options={{ title: 'Company Prep' }}
             />
             <InterviewStack.Screen
                 name="InterviewSession"
@@ -31,7 +40,29 @@ function InterviewStackNavigator() {
                 component={SessionSummaryScreen}
                 options={{ title: 'Session Summary', headerLeft: () => null }}
             />
+            <InterviewStack.Screen
+                name="FeedbackDetail"
+                component={FeedbackDetailScreen}
+                options={{ title: 'Feedback' }}
+            />
         </InterviewStack.Navigator>
+    );
+}
+
+function ProfileStackNavigator() {
+    return (
+        <ProfileStack.Navigator>
+            <ProfileStack.Screen
+                name="ProfileHome"
+                component={ProfileScreen}
+                options={{ title: 'Profile' }}
+            />
+            <ProfileStack.Screen
+                name="ResumeInput"
+                component={ResumeInputScreen}
+                options={{ title: 'My Resume' }}
+            />
+        </ProfileStack.Navigator>
     );
 }
 
@@ -60,8 +91,8 @@ const MainNavigator = () => {
             />
             <Tab.Screen
                 name="Profile"
-                component={ProfileScreen}
-                options={{ title: 'Profile', headerShown: true }}
+                component={ProfileStackNavigator}
+                options={{ title: 'Profile' }}
             />
         </Tab.Navigator>
     );

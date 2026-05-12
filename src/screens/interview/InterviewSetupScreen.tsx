@@ -124,6 +124,19 @@ const InterviewSetupScreen = () => {
 
                 <VSpacer height={16} />
                 <Button title="Start Interview" onPress={handleStart} />
+
+                <VSpacer height={12} />
+                <TouchableOpacity
+                    onPress={() => navigation.navigate('CompanyPrep' as never)}
+                    style={{ padding: scale(12), alignItems: 'center' }}>
+                    <Text
+                        style={[
+                            texts.body.medium.semibold,
+                            { color: colors.primary[500] },
+                        ]}>
+                        Prep for a specific company →
+                    </Text>
+                </TouchableOpacity>
             </View>
         </ScrollView>
     );

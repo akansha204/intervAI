@@ -7,6 +7,7 @@ import {
     ActivityIndicator,
     Alert,
 } from 'react-native';
+import Animated, { FadeInUp, FadeIn } from 'react-native-reanimated';
 import Button from '../../components/common/Button';
 import * as interviewService from '../../services/interviewService';
 import { colors } from '../../styles/colors';
@@ -132,7 +133,9 @@ const InterviewScreen = () => {
 
                 <VSpacer height={16} />
                 {/* Question */}
-                <View
+                <Animated.View
+                    key={currentQuestion?.id ?? questionCount}
+                    entering={FadeInUp.duration(400).springify()}
                     style={{
                         backgroundColor: colors.Others.white,
                         padding: scale(20),
@@ -157,7 +160,7 @@ const InterviewScreen = () => {
                             </Text>
                         </>
                     )}
-                </View>
+                </Animated.View>
 
                 <VSpacer height={20} />
                 {/* Answer Input or Feedback */}
@@ -198,7 +201,8 @@ const InterviewScreen = () => {
                 ) : (
                     <>
                         {/* Feedback Display */}
-                        <View
+                        <Animated.View
+                            entering={FadeIn.duration(500)}
                             style={{
                                 backgroundColor: colors.Others.white,
                                 padding: scale(20),
@@ -278,7 +282,7 @@ const InterviewScreen = () => {
                                     • {improvement}
                                 </Text>
                             ))}
-                        </View>
+                        </Animated.View>
 
                         <VSpacer height={20} />
                         <View style={{ flexDirection: 'row' }}>
