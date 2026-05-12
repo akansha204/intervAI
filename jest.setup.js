@@ -4,6 +4,11 @@ jest.mock('@react-native-async-storage/async-storage', () =>
 
 jest.mock('react-native-gesture-handler', () => ({}));
 
+jest.mock('react-native-config', () => ({
+  __esModule: true,
+  default: {},
+}));
+
 jest.mock('react-native-reanimated', () => {
   const RN = require('react-native');
 

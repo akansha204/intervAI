@@ -28,10 +28,12 @@ describe('POST /api/auth/register', () => {
         expect(res.body.data).toEqual(fakeAuthResponse);
     });
 
-    it('returns 400 when required fields are missing', async () => {
+    it('returns 400 with VALIDATION_FAILED when required fields are missing', async () => {
         const res = await request(app).post('/api/auth/register').send({ email: 'a@b.com' });
         expect(res.status).toBe(400);
-        expect(res.body.message).toMatch(/missing/i);
+        expect(res.body.code).toBe('VALIDATION_FAILED');
+        expect(res.body.fields).toBeDefined();
+        expect(Object.keys(res.body.fields).length).toBeGreaterThan(0);
     });
 
     it('returns 400 when the email is already taken', async () => {
@@ -62,9 +64,11 @@ describe('POST /api/auth/login', () => {
         expect(res.body.data).toEqual(fakeAuthResponse);
     });
 
-    it('returns 400 when email or password is missing', async () => {
+    it('returns 400 with VALIDATION_FAILED when password is missing', async () => {
         const res = await request(app).post('/api/auth/login').send({ email: 'a@b.com' });
         expect(res.status).toBe(400);
+        expect(res.body.code).toBe('VALIDATION_FAILED');
+        expect(res.body.fields).toHaveProperty('password');
     });
 
     it('returns 401 on invalid credentials', async () => {
@@ -94,9 +98,11 @@ describe('POST /api/auth/refresh', () => {
         expect(res.body.data).toEqual({ accessToken: 'new-access', refreshToken: 'new-refresh' });
     });
 
-    it('returns 400 when refreshToken is missing', async () => {
+    it('returns 400 with VALIDATION_FAILED when refreshToken is missing', async () => {
         const res = await request(app).post('/api/auth/refresh').send({});
         expect(res.status).toBe(400);
+        expect(res.body.code).toBe('VALIDATION_FAILED');
+        expect(res.body.fields).toHaveProperty('refreshToken');
     });
 
     it('returns 401 when refresh token is invalid', async () => {
