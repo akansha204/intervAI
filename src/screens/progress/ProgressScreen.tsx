@@ -11,6 +11,8 @@ import { texts } from '../../styles/texts';
 import shadowStyles from '../../styles/shadow';
 import { scale } from '../../helpers/scaler';
 import VSpacer from '../../components/base/spacer/VSpacer/VSpacer';
+import AnimatedProgressBar from '../../components/common/AnimatedProgressBar';
+import { progressSessions } from '../../../assets/staticData/staticData';
 
 const ProgressScreen = () => {
     const [refreshing, setRefreshing] = useState(false);
@@ -20,12 +22,7 @@ const ProgressScreen = () => {
         setTimeout(() => setRefreshing(false), 1000);
     };
 
-    const sessions = [
-        { id: '1', type: 'Behavioral', score: 8.5, date: '2024-01-15', time: '2:30 PM', questionsCount: 5, status: 'completed' },
-        { id: '2', type: 'Technical', score: 7.8, date: '2024-01-14', time: '10:15 AM', questionsCount: 8, status: 'completed' },
-        { id: '3', type: 'System Design', score: 9.2, date: '2024-01-13', time: '4:45 PM', questionsCount: 6, status: 'completed' },
-        { id: '4', type: 'Behavioral', score: 6.5, date: '2024-01-12', time: '11:00 AM', questionsCount: 4, status: 'completed' },
-    ];
+    const sessions = progressSessions;
 
     const stats = {
         totalSessions: sessions.length,
@@ -72,6 +69,23 @@ const ProgressScreen = () => {
                 <Text style={[texts.body.medium.regular, { color: colors.Greyscale[500] }]}>
                     Track your interview performance
                 </Text>
+
+                <VSpacer height={20} />
+                <View
+                    style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                    }}>
+                    <Text style={[texts.body.small.semibold, { color: colors.Greyscale[700] }]}>
+                        Average score
+                    </Text>
+                    <Text style={[texts.body.small.semibold, { color: colors.primary[500] }]}>
+                        {stats.averageScore} / 10
+                    </Text>
+                </View>
+                <VSpacer height={8} />
+                <AnimatedProgressBar progress={Number(stats.averageScore) / 10} />
             </View>
 
             {/* Stats Grid */}

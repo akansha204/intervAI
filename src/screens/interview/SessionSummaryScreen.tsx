@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { RootState, AppDispatch } from '../../store';
 import { clearSession } from '../../store/slices/interviewSlice';
 import Button from '../../components/common/Button';
+import AnimatedNumber from '../../components/common/AnimatedNumber';
 import { colors } from '../../styles/colors';
 import { texts } from '../../styles/texts';
 import { scale } from '../../helpers/scaler';
@@ -50,9 +51,12 @@ const SessionSummaryScreen = () => {
                     Session Complete!
                 </Text>
                 <VSpacer height={8} />
-                <Text style={[texts.heading.heading1, { color: colors.Others.white }]}>
-                    {averageScore}/10
-                </Text>
+                <AnimatedNumber
+                    value={Number(averageScore)}
+                    decimals={1}
+                    suffix="/10"
+                    style={[texts.heading.heading1, { color: colors.Others.white }]}
+                />
                 <VSpacer height={4} />
                 <Text
                     style={[
@@ -108,8 +112,14 @@ const SessionSummaryScreen = () => {
                 <VSpacer height={16} />
 
                 {questionsAnswered.map((qa, index) => (
-                    <View
+                    <TouchableOpacity
                         key={index}
+                        activeOpacity={0.7}
+                        disabled={!qa.feedback}
+                        onPress={() =>
+                            qa.feedback &&
+                            (navigation as any).navigate('FeedbackDetail', { questionAnswer: qa })
+                        }
                         style={{
                             backgroundColor: colors.Others.white,
                             padding: scale(16),
@@ -207,7 +217,7 @@ const SessionSummaryScreen = () => {
                                 ))}
                             </>
                         )}
-                    </View>
+                    </TouchableOpacity>
                 ))}
             </View>
 
