@@ -1,34 +1,33 @@
-import dotenv from 'dotenv';
 import prisma from './utils/prisma';
 import { createApp } from './app';
-
-dotenv.config();
+import { env } from './utils/env';
+import { logger } from './utils/logger';
 
 const app = createApp();
-const PORT = process.env.PORT || 3000;
 
 const startServer = async () => {
-    try {
-        await prisma.$connect();
-        console.log('Database connected successfully');
+  try {
+    await prisma.$connect();
+    logger.info('Database connected');
 
-        app.listen(PORT, () => {
-            console.log(`Server is running on port ${PORT}`);
-            console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-            console.log(`Health check: http://localhost:${PORT}/health`);
-        });
-    } catch (error) {
-        console.error('Failed to connect to database:', error);
-        process.exit(1);
-    }
+    app.listen(env.PORT, () => {
+      logger.info(
+        { port: env.PORT, env: env.NODE_ENV },
+        `Server listening on http://localhost:${env.PORT}`,
+      );
+    });
+  } catch (err) {
+    logger.fatal({ err }, 'Failed to connect to database');
+    process.exit(1);
+  }
 };
 
 startServer();
 
 process.on('SIGINT', async () => {
-    console.log('Shutting down gracefully...');
-    await prisma.$disconnect();
-    process.exit(0);
+  logger.info('Shutting down gracefully');
+  await prisma.$disconnect();
+  process.exit(0);
 });
 
 export default app;
