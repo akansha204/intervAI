@@ -6,21 +6,7 @@ import { colors } from '../../styles/colors';
 import { texts } from '../../styles/texts';
 import { scale } from '../../helpers/scaler';
 import VSpacer from '../../components/base/spacer/VSpacer/VSpacer';
-
-const exampleResume = `John Doe
-Software Engineer
-
-EXPERIENCE:
-- Senior Developer at Tech Corp (2020-Present)
-  • Led team of 5 developers
-  • Built React Native mobile apps
-  • Improved performance by 40%
-
-SKILLS:
-React, TypeScript, Node.js, AWS
-
-EDUCATION:
-BS Computer Science, MIT (2016-2020)`;
+import { exampleResume } from '../../../assets/staticData/staticData';
 
 const ResumeInputScreen = () => {
     const navigation = useNavigation();

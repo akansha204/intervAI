@@ -7,23 +7,22 @@ import { texts } from '../../styles/texts';
 import { scale } from '../../helpers/scaler';
 import VSpacer from '../../components/base/spacer/VSpacer/VSpacer';
 import HSpacer from '../../components/base/spacer/HSpacer/HSpacer';
+import {
+    interviewTypes,
+    interviewDifficulties,
+    DifficultyId,
+} from '../../../assets/staticData/staticData';
+
+const difficultyColors: Record<DifficultyId, string> = {
+    easy: colors.Alert.Success[100],
+    medium: colors.Alert.Warning[100],
+    hard: colors.Alert.Error[100],
+};
 
 const InterviewSetupScreen = () => {
     const navigation = useNavigation();
     const [selectedType, setSelectedType] = useState('behavioral');
-    const [selectedDifficulty, setSelectedDifficulty] = useState('medium');
-
-    const types = [
-        { id: 'behavioral', label: 'Behavioral', icon: '💬' },
-        { id: 'technical', label: 'Technical', icon: '💻' },
-        { id: 'system-design', label: 'System Design', icon: '🏗️' },
-    ];
-
-    const difficulties = [
-        { id: 'easy', label: 'Easy', color: colors.Alert.Success[100] },
-        { id: 'medium', label: 'Medium', color: colors.Alert.Warning[100] },
-        { id: 'hard', label: 'Hard', color: colors.Alert.Error[100] },
-    ];
+    const [selectedDifficulty, setSelectedDifficulty] = useState<DifficultyId>('medium');
 
     const handleStart = () => {
         navigation.navigate('InterviewSession' as never, {
@@ -50,7 +49,7 @@ const InterviewSetupScreen = () => {
                 </Text>
                 <VSpacer height={16} />
                 <View style={{ marginBottom: scale(24) }}>
-                    {types.map((type) => {
+                    {interviewTypes.map((type) => {
                         const selected = selectedType === type.id;
                         return (
                             <TouchableOpacity
@@ -91,8 +90,9 @@ const InterviewSetupScreen = () => {
                 </Text>
                 <VSpacer height={16} />
                 <View style={{ flexDirection: 'row', gap: scale(12), marginBottom: scale(16) }}>
-                    {difficulties.map((difficulty) => {
+                    {interviewDifficulties.map((difficulty) => {
                         const selected = selectedDifficulty === difficulty.id;
+                        const color = difficultyColors[difficulty.id];
                         return (
                             <TouchableOpacity
                                 key={difficulty.id}
@@ -102,8 +102,8 @@ const InterviewSetupScreen = () => {
                                     paddingVertical: scale(12),
                                     borderRadius: scale(8),
                                     borderWidth: scale(2),
-                                    borderColor: selected ? difficulty.color : colors.Greyscale[100],
-                                    backgroundColor: selected ? difficulty.color : 'transparent',
+                                    borderColor: selected ? color : colors.Greyscale[100],
+                                    backgroundColor: selected ? color : 'transparent',
                                     alignItems: 'center',
                                 }}>
                                 <Text

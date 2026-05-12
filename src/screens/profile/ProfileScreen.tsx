@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
 import { RootState, AppDispatch } from '../../store';
 import { logout } from '../../store/slices/authSlice';
 import { colors } from '../../styles/colors';
@@ -8,9 +9,15 @@ import { texts } from '../../styles/texts';
 import { scale } from '../../helpers/scaler';
 import VSpacer from '../../components/base/spacer/VSpacer/VSpacer';
 import HSpacer from '../../components/base/spacer/HSpacer/HSpacer';
+import {
+    profileAchievements,
+    profileSettings,
+    profileStatsPlaceholder,
+} from '../../../assets/staticData/staticData';
 
 const ProfileScreen = () => {
     const dispatch = useDispatch<AppDispatch>();
+    const navigation = useNavigation();
     const { user } = useSelector((state: RootState) => state.auth);
 
     const handleLogout = () => {
@@ -24,21 +31,9 @@ const ProfileScreen = () => {
         );
     };
 
-    const achievements = [
-        { id: 1, title: 'First Interview', icon: '🎯', unlocked: true },
-        { id: 2, title: '5 Day Streak', icon: '🔥', unlocked: true },
-        { id: 3, title: 'Perfect Score', icon: '⭐', unlocked: false },
-        { id: 4, title: '10 Sessions', icon: '💯', unlocked: true },
-        { id: 5, title: 'STAR Master', icon: '🌟', unlocked: false },
-        { id: 6, title: '30 Day Streak', icon: '🏆', unlocked: false },
-    ];
-
-    const settings = [
-        { id: 1, title: 'Notifications', icon: '🔔', value: 'On' },
-        { id: 2, title: 'Interview Reminders', icon: '⏰', value: 'Daily' },
-        { id: 3, title: 'Difficulty Preference', icon: '📊', value: 'Medium' },
-        { id: 4, title: 'Voice Recording', icon: '🎤', value: 'Enabled' },
-    ];
+    const achievements = profileAchievements;
+    const settings = profileSettings;
+    const stats = profileStatsPlaceholder;
 
     return (
         <ScrollView style={{ flex: 1, backgroundColor: colors.Greyscale[0] }}>
@@ -91,7 +86,9 @@ const ProfileScreen = () => {
                 <VSpacer height={16} />
                 <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
                     <View style={{ alignItems: 'center' }}>
-                        <Text style={[texts.heading.heading4, { color: colors.primary[500] }]}>12</Text>
+                        <Text style={[texts.heading.heading4, { color: colors.primary[500] }]}>
+                            {stats.totalSessions}
+                        </Text>
                         <VSpacer height={4} />
                         <Text style={[texts.body.small.regular, { color: colors.Greyscale[500] }]}>
                             Sessions
@@ -99,7 +96,7 @@ const ProfileScreen = () => {
                     </View>
                     <View style={{ alignItems: 'center' }}>
                         <Text style={[texts.heading.heading4, { color: colors.Alert.Success[100] }]}>
-                            8.5
+                            {stats.averageScore}
                         </Text>
                         <VSpacer height={4} />
                         <Text style={[texts.body.small.regular, { color: colors.Greyscale[500] }]}>
@@ -108,7 +105,7 @@ const ProfileScreen = () => {
                     </View>
                     <View style={{ alignItems: 'center' }}>
                         <Text style={[texts.heading.heading4, { color: colors.Alert.Warning[100] }]}>
-                            5
+                            {stats.dailyStreak}
                         </Text>
                         <VSpacer height={4} />
                         <Text style={[texts.body.small.regular, { color: colors.Greyscale[500] }]}>
@@ -219,6 +216,24 @@ const ProfileScreen = () => {
                     padding: scale(20),
                     borderRadius: scale(12),
                 }}>
+                <TouchableOpacity
+                    style={{ paddingVertical: scale(12) }}
+                    onPress={() => navigation.navigate('ResumeInput' as never)}>
+                    <Text
+                        style={[
+                            texts.body.medium.regular,
+                            { color: colors.primary[500], textAlign: 'center' },
+                        ]}>
+                        My Resume
+                    </Text>
+                </TouchableOpacity>
+                <View
+                    style={{
+                        height: scale(1),
+                        backgroundColor: colors.Greyscale[100],
+                        marginVertical: scale(8),
+                    }}
+                />
                 <TouchableOpacity style={{ paddingVertical: scale(12) }}>
                     <Text
                         style={[

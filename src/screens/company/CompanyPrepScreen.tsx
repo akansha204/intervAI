@@ -7,37 +7,31 @@ import { texts } from '../../styles/texts';
 import { scale } from '../../helpers/scaler';
 import VSpacer from '../../components/base/spacer/VSpacer/VSpacer';
 import HSpacer from '../../components/base/spacer/HSpacer/HSpacer';
+import {
+    popularCompanies,
+    interviewRoles,
+    defaultCompanyTips,
+} from '../../../assets/staticData/staticData';
 
 const CompanyPrepScreen = () => {
     const navigation = useNavigation();
     const [companyName, setCompanyName] = useState('');
     const [selectedRole, setSelectedRole] = useState('');
 
-    const popularCompanies = [
-        { id: 1, name: 'Google', icon: '🔍' },
-        { id: 2, name: 'Amazon', icon: '📦' },
-        { id: 3, name: 'Microsoft', icon: '💻' },
-        { id: 4, name: 'Meta', icon: '👥' },
-        { id: 5, name: 'Apple', icon: '🍎' },
-        { id: 6, name: 'Netflix', icon: '🎬' },
-    ];
-
-    const roles = ['Software Engineer', 'Product Manager', 'Data Scientist', 'Designer'];
-
-    const companyTips = companyName
-        ? {
-              culture: 'Focus on innovation and customer obsession',
-              values: 'Leadership principles and ownership',
-              questions: 'Expect behavioral questions using STAR method',
-          }
-        : null;
+    const roles = interviewRoles;
+    const companyTips = companyName ? defaultCompanyTips : null;
 
     const handleStartPrep = () => {
         if (!companyName) {
             Alert.alert('Error', 'Please select or enter a company name');
             return;
         }
-        navigation.navigate('Interview' as never);
+        (navigation as any).navigate('InterviewSession', {
+            type: 'company-specific',
+            difficulty: 'medium',
+            company: companyName,
+            role: selectedRole || undefined,
+        });
     };
 
     const renderTipRow = (icon: string, label: string, content: string) => (
@@ -98,7 +92,6 @@ const CompanyPrepScreen = () => {
                                         ? colors.primary[500]
                                         : colors.Greyscale[100],
                                 }}>
-                                <Text style={{ fontSize: scale(18) }}>{company.icon}</Text>
                                 <HSpacer width={8} />
                                 <Text
                                     style={[

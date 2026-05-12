@@ -8,6 +8,12 @@ import shadowStyles from '../../styles/shadow';
 import { scale } from '../../helpers/scaler';
 import VSpacer from '../../components/base/spacer/VSpacer/VSpacer';
 import HSpacer from '../../components/base/spacer/HSpacer/HSpacer';
+import {
+    dailyChallengePlaceholder,
+    streakDataPlaceholder,
+    weekProgressPlaceholder,
+    motivationalQuote,
+} from '../../../assets/staticData/staticData';
 
 const DailyChallengeScreen = () => {
     const navigation = useNavigation();
@@ -19,25 +25,9 @@ const DailyChallengeScreen = () => {
         day: 'numeric',
     });
 
-    const dailyChallenge = {
-        title: 'Behavioral Question Challenge',
-        description: 'Answer 3 behavioral questions using the STAR method',
-        difficulty: 'Medium',
-        points: 50,
-        timeEstimate: '15 min',
-    };
-
-    const streakData = { current: 5, longest: 12, total: 45 };
-
-    const weekProgress = [
-        { day: 'Mon', completed: true },
-        { day: 'Tue', completed: true },
-        { day: 'Wed', completed: true },
-        { day: 'Thu', completed: true },
-        { day: 'Fri', completed: true },
-        { day: 'Sat', completed: false },
-        { day: 'Sun', completed: false },
-    ];
+    const dailyChallenge = dailyChallengePlaceholder;
+    const streakData = streakDataPlaceholder;
+    const weekProgress = weekProgressPlaceholder;
 
     const handleStartChallenge = () => {
         navigation.navigate('Interview' as never);
@@ -246,7 +236,7 @@ const DailyChallengeScreen = () => {
                         texts.body.medium.regular,
                         { color: colors.Greyscale[900], fontStyle: 'italic' },
                     ]}>
-                    "Success is the sum of small efforts repeated day in and day out."
+                    "{motivationalQuote.text}"
                 </Text>
                 <VSpacer height={8} />
                 <Text
@@ -254,7 +244,7 @@ const DailyChallengeScreen = () => {
                         texts.body.small.regular,
                         { color: colors.Greyscale[500], textAlign: 'right' },
                     ]}>
-                    - Robert Collier
+                    - {motivationalQuote.author}
                 </Text>
             </View>
             <VSpacer height={24} />
