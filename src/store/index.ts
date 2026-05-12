@@ -7,13 +7,6 @@ export const store = configureStore({
         auth: authReducer,
         interview: interviewReducer,
     },
-    middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware({
-            serializableCheck: {
-                // Ignore these action types for AsyncStorage
-                ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
-            },
-        }),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

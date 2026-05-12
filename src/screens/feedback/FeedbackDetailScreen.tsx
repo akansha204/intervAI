@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, ScrollView } from 'react-native';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import Button from '../../components/common/Button';
 import { colors } from '../../styles/colors';
 import { texts } from '../../styles/texts';
@@ -7,31 +8,30 @@ import { scale } from '../../helpers/scaler';
 import VSpacer from '../../components/base/spacer/VSpacer/VSpacer';
 import HSpacer from '../../components/base/spacer/HSpacer/HSpacer';
 
-interface FeedbackDetailScreenProps {
-    route: {
-        params: {
-            questionAnswer: {
-                question: { text: string };
-                answer: string;
-                feedback: {
-                    score: number;
-                    strengths: string[];
-                    weaknesses: string[];
-                    improvements: string[];
-                    starAnalysis: {
-                        situation: string;
-                        task: string;
-                        action: string;
-                        result: string;
-                    };
+type FeedbackDetailRouteParams = {
+    FeedbackDetail: {
+        questionAnswer: {
+            question: { text: string };
+            answer: string;
+            feedback: {
+                score: number;
+                strengths: string[];
+                weaknesses: string[];
+                improvements: string[];
+                starAnalysis: {
+                    situation: string;
+                    task: string;
+                    action: string;
+                    result: string;
                 };
             };
         };
     };
-    navigation: any;
-}
+};
 
-const FeedbackDetailScreen: React.FC<FeedbackDetailScreenProps> = ({ route, navigation }) => {
+const FeedbackDetailScreen = () => {
+    const navigation = useNavigation();
+    const route = useRoute<RouteProp<FeedbackDetailRouteParams, 'FeedbackDetail'>>();
     const { questionAnswer } = route.params;
     const { question, answer, feedback } = questionAnswer;
 
