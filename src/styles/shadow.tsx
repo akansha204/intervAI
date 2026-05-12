@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet } from 'react-native';
 
 const shadowStyles = StyleSheet.create({
   XSmall: {
@@ -46,4 +46,3 @@ const shadowStyles = StyleSheet.create({
 });
 
 export default shadowStyles;
-

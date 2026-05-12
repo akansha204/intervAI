@@ -18,84 +18,85 @@ const InterviewStack = createStackNavigator();
 const ProfileStack = createStackNavigator();
 
 function InterviewStackNavigator() {
-    return (
-        <InterviewStack.Navigator>
-            <InterviewStack.Screen
-                name="InterviewSetup"
-                component={InterviewSetupScreen}
-                options={{ title: 'Start Interview' }}
-            />
-            <InterviewStack.Screen
-                name="CompanyPrep"
-                component={CompanyPrepScreen}
-                options={{ title: 'Company Prep' }}
-            />
-            <InterviewStack.Screen
-                name="InterviewSession"
-                component={InterviewScreen}
-                options={{ title: 'Interview', headerLeft: () => null }}
-            />
-            <InterviewStack.Screen
-                name="SessionSummary"
-                component={SessionSummaryScreen}
-                options={{ title: 'Session Summary', headerLeft: () => null }}
-            />
-            <InterviewStack.Screen
-                name="FeedbackDetail"
-                component={FeedbackDetailScreen}
-                options={{ title: 'Feedback' }}
-            />
-        </InterviewStack.Navigator>
-    );
+  return (
+    <InterviewStack.Navigator>
+      <InterviewStack.Screen
+        name="InterviewSetup"
+        component={InterviewSetupScreen}
+        options={{ title: 'Start Interview' }}
+      />
+      <InterviewStack.Screen
+        name="CompanyPrep"
+        component={CompanyPrepScreen}
+        options={{ title: 'Company Prep' }}
+      />
+      <InterviewStack.Screen
+        name="InterviewSession"
+        component={InterviewScreen}
+        options={{ title: 'Interview', headerLeft: () => null }}
+      />
+      <InterviewStack.Screen
+        name="SessionSummary"
+        component={SessionSummaryScreen}
+        options={{ title: 'Session Summary', headerLeft: () => null }}
+      />
+      <InterviewStack.Screen
+        name="FeedbackDetail"
+        component={FeedbackDetailScreen}
+        options={{ title: 'Feedback' }}
+      />
+    </InterviewStack.Navigator>
+  );
 }
 
 function ProfileStackNavigator() {
-    return (
-        <ProfileStack.Navigator>
-            <ProfileStack.Screen
-                name="ProfileHome"
-                component={ProfileScreen}
-                options={{ title: 'Profile' }}
-            />
-            <ProfileStack.Screen
-                name="ResumeInput"
-                component={ResumeInputScreen}
-                options={{ title: 'My Resume' }}
-            />
-        </ProfileStack.Navigator>
-    );
+  return (
+    <ProfileStack.Navigator>
+      <ProfileStack.Screen
+        name="ProfileHome"
+        component={ProfileScreen}
+        options={{ title: 'Profile' }}
+      />
+      <ProfileStack.Screen
+        name="ResumeInput"
+        component={ResumeInputScreen}
+        options={{ title: 'My Resume' }}
+      />
+    </ProfileStack.Navigator>
+  );
 }
 
 const MainNavigator = () => {
-    return (
-        <Tab.Navigator
-            screenOptions={{
-                headerShown: false,
-                tabBarActiveTintColor: colors.primary[500],
-                tabBarInactiveTintColor: colors.Greyscale[400],
-            }}>
-            <Tab.Screen
-                name="Home"
-                component={HomeScreen}
-                options={{ title: 'Home', headerShown: true }}
-            />
-            <Tab.Screen
-                name="Interview"
-                component={InterviewStackNavigator}
-                options={{ title: 'Interview' }}
-            />
-            <Tab.Screen
-                name="Progress"
-                component={ProgressScreen}
-                options={{ title: 'Progress', headerShown: true }}
-            />
-            <Tab.Screen
-                name="Profile"
-                component={ProfileStackNavigator}
-                options={{ title: 'Profile' }}
-            />
-        </Tab.Navigator>
-    );
+  return (
+    <Tab.Navigator
+      screenOptions={{
+        headerShown: false,
+        tabBarActiveTintColor: colors.primary[500],
+        tabBarInactiveTintColor: colors.Greyscale[400],
+      }}
+    >
+      <Tab.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{ title: 'Home', headerShown: true }}
+      />
+      <Tab.Screen
+        name="Interview"
+        component={InterviewStackNavigator}
+        options={{ title: 'Interview' }}
+      />
+      <Tab.Screen
+        name="Progress"
+        component={ProgressScreen}
+        options={{ title: 'Progress', headerShown: true }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={ProfileStackNavigator}
+        options={{ title: 'Profile' }}
+      />
+    </Tab.Navigator>
+  );
 };
 
 export default MainNavigator;

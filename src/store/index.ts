@@ -3,10 +3,10 @@ import authReducer from './slices/authSlice';
 import interviewReducer from './slices/interviewSlice';
 
 export const store = configureStore({
-    reducer: {
-        auth: authReducer,
-        interview: interviewReducer,
-    },
+  reducer: {
+    auth: authReducer,
+    interview: interviewReducer,
+  },
 });
 
 export type RootState = ReturnType<typeof store.getState>;

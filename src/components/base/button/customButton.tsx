@@ -217,7 +217,6 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
 }) => {
   const [isFocused, setIsFocused] = useState(autoFocus);
 
-
   const styleConfig = getButtonTypeStyles(type, colors, borderRadius);
   const sizeConfig = getSizeConfig(size);
 
