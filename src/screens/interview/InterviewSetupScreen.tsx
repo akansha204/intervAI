@@ -51,7 +51,6 @@ const InterviewSetupScreen = () => {
         </Text>
         <VSpacer height={32} />
 
-        {/* Interview Type */}
         <Text
           style={[texts.heading.heading6, { color: colors.Greyscale[900] }]}
         >
@@ -100,7 +99,6 @@ const InterviewSetupScreen = () => {
         </View>
 
         <VSpacer height={8} />
-        {/* Difficulty */}
         <Text
           style={[texts.heading.heading6, { color: colors.Greyscale[900] }]}
         >

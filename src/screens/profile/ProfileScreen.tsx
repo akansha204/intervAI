@@ -37,7 +37,6 @@ const ProfileScreen = () => {
 
   return (
     <ScrollView style={{ flex: 1, backgroundColor: colors.Greyscale[0] }}>
-      {/* Profile Header */}
       <View
         style={{
           backgroundColor: colors.primary[500],
@@ -76,7 +75,6 @@ const ProfileScreen = () => {
         </Text>
       </View>
 
-      {/* Stats Summary */}
       <View
         style={{
           backgroundColor: colors.Others.white,
@@ -150,7 +148,6 @@ const ProfileScreen = () => {
         </View>
       </View>
 
-      {/* Achievements */}
       <View
         style={{
           backgroundColor: colors.Others.white,
@@ -207,7 +204,6 @@ const ProfileScreen = () => {
         </View>
       </View>
 
-      {/* Settings */}
       <View
         style={{
           backgroundColor: colors.Others.white,
@@ -259,7 +255,6 @@ const ProfileScreen = () => {
         ))}
       </View>
 
-      {/* Account Actions */}
       <View
         style={{
           backgroundColor: colors.Others.white,

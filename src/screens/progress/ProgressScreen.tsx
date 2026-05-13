@@ -75,7 +75,6 @@ const ProgressScreen = () => {
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
     >
-      {/* Header */}
       <View
         style={{ backgroundColor: colors.Others.white, padding: scale(20) }}
       >
@@ -116,8 +115,6 @@ const ProgressScreen = () => {
         <VSpacer height={8} />
         <AnimatedProgressBar progress={Number(stats.averageScore) / 10} />
       </View>
-
-      {/* Stats Grid */}
       <View
         style={{
           flexDirection: 'row',
@@ -148,7 +145,6 @@ const ProgressScreen = () => {
         )}
       </View>
 
-      {/* Session History */}
       <View style={{ paddingHorizontal: scale(20), marginTop: scale(8) }}>
         <Text
           style={[texts.heading.heading5, { color: colors.Greyscale[900] }]}

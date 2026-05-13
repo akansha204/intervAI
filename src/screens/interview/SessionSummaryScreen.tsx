@@ -43,7 +43,6 @@ const SessionSummaryScreen = () => {
 
   return (
     <ScrollView style={{ flex: 1, backgroundColor: colors.Greyscale[0] }}>
-      {/* Header Card */}
       <View
         style={{
           backgroundColor: colors.primary[500],
@@ -74,7 +73,6 @@ const SessionSummaryScreen = () => {
         </Text>
       </View>
 
-      {/* Stats */}
       <View style={{ flexDirection: 'row', padding: scale(20) }}>
         <View
           style={{
@@ -121,7 +119,6 @@ const SessionSummaryScreen = () => {
         </View>
       </View>
 
-      {/* Question Breakdown */}
       <View style={{ paddingHorizontal: scale(20) }}>
         <Text
           style={[texts.heading.heading5, { color: colors.Greyscale[900] }]}
@@ -256,7 +253,6 @@ const SessionSummaryScreen = () => {
         ))}
       </View>
 
-      {/* Actions */}
       <View style={{ padding: scale(20), paddingBottom: scale(40) }}>
         <Button title="Back to Home" onPress={handleFinish} />
         <VSpacer height={12} />

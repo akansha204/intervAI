@@ -136,7 +136,6 @@ const InterviewScreen = () => {
   return (
     <ScrollView style={{ flex: 1, backgroundColor: colors.Greyscale[0] }}>
       <View style={{ padding: scale(20) }}>
-        {/* Progress */}
         <View
           style={{
             backgroundColor: colors.Others.white,
@@ -153,7 +152,6 @@ const InterviewScreen = () => {
         </View>
 
         <VSpacer height={16} />
-        {/* Question */}
         <Animated.View
           key={currentQuestion?.id ?? questionCount}
           entering={FadeInUp.duration(400).springify()}
@@ -196,7 +194,6 @@ const InterviewScreen = () => {
         </Animated.View>
 
         <VSpacer height={20} />
-        {/* Answer Input or Feedback */}
         {!feedback ? (
           <>
             <Text
@@ -238,7 +235,6 @@ const InterviewScreen = () => {
           </>
         ) : (
           <>
-            {/* Feedback Display */}
             <Animated.View
               entering={FadeIn.duration(500)}
               style={{

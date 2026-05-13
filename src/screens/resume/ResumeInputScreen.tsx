@@ -35,7 +35,6 @@ const ResumeInputScreen = () => {
   return (
     <ScrollView style={{ flex: 1, backgroundColor: colors.Greyscale[0] }}>
       <View style={{ padding: scale(20) }}>
-        {/* Header */}
         <Text
           style={[texts.heading.heading4, { color: colors.Greyscale[900] }]}
         >
@@ -49,7 +48,6 @@ const ResumeInputScreen = () => {
         </Text>
         <VSpacer height={24} />
 
-        {/* Tips */}
         <View
           style={{
             backgroundColor: colors.primary[50],
@@ -100,7 +98,6 @@ const ResumeInputScreen = () => {
         </View>
 
         <VSpacer height={20} />
-        {/* Resume Input */}
         <Text
           style={[texts.body.medium.semibold, { color: colors.Greyscale[900] }]}
         >
@@ -129,7 +126,6 @@ const ResumeInputScreen = () => {
           numberOfLines={15}
         />
 
-        {/* Character Count */}
         <VSpacer height={8} />
         <Text
           style={[
@@ -149,7 +145,6 @@ const ResumeInputScreen = () => {
         />
         <Button title="Save Resume" onPress={handleSave} loading={isLoading} />
 
-        {/* Info */}
         <VSpacer height={20} />
         <View
           style={{
