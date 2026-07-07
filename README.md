@@ -208,15 +208,6 @@ Tracked in [docs/IMPROVEMENTS.md](docs/IMPROVEMENTS.md). High-level next steps:
 
 ---
 
-## Author
-
-**Anmol Singh**
-- Portfolio: [anmoldevshowcase.vercel.app](https://anmoldevshowcase.vercel.app)
-- LinkedIn: [linkedin.com/in/anmolsingh2060](https://www.linkedin.com/in/anmolsingh2060)
-- GitHub: [@Anmolzezx](https://github.com/Anmolzezx)
-
----
-
 ## License
 
 MIT.
