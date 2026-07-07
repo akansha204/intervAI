@@ -1,6 +1,32 @@
 import api from './api';
 import { InterviewSession, Question, Feedback } from '../types';
 
+export interface DashboardStats {
+    totalSessions: number;
+    averageScore: number;
+    dailyStreak: number;
+    completedToday: number;
+}
+
+export interface DashboardSession {
+    id: string;
+    type: string;
+    score: number | null;
+    date: string;
+    questionsCount: number;
+}
+
+/**
+ * Get dashboard stats and recent sessions
+ */
+export const getDashboard = async (): Promise<{
+    stats: DashboardStats;
+    recentSessions: DashboardSession[];
+}> => {
+    const response = await api.get('/interview/dashboard');
+    return response.data.data;
+};
+
 /**
  * Start a new interview session
  */

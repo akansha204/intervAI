@@ -14,8 +14,7 @@ const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
  */
 export const generateContent = async (prompt: string): Promise<string> => {
     try {
-        // Using gemini-3-flash-preview as shown in Google AI Studio
-        const model = genAI.getGenerativeModel({ model: 'gemini-3-flash-preview' });
+        const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
         const result = await model.generateContent(prompt);
         const response = await result.response;
         return response.text();
@@ -29,14 +28,18 @@ export const generateContent = async (prompt: string): Promise<string> => {
  * Generate structured JSON response from Gemini
  */
 export const generateJSONContent = async <T>(prompt: string): Promise<T> => {
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+    let text: string;
     try {
-        const model = genAI.getGenerativeModel({ model: 'gemini-3-flash-preview' });
         const result = await model.generateContent(prompt);
         const response = await result.response;
-        const text = response.text();
+        text = response.text();
+    } catch (error: any) {
+        console.error('❌ Gemini API Error:', error.message);
+        throw new Error('Failed to generate AI response');
+    }
 
-        console.log('🤖 Gemini raw response:', text.substring(0, 200));
-
+    try {
         // Try multiple extraction methods
         let jsonText = text;
 
@@ -55,14 +58,9 @@ export const generateJSONContent = async <T>(prompt: string): Promise<T> => {
         // Clean up the text
         jsonText = jsonText.trim();
 
-        console.log('📝 Extracted JSON:', jsonText.substring(0, 200));
-
-        const parsed = JSON.parse(jsonText);
-        console.log('✅ Successfully parsed JSON');
-        return parsed;
+        return JSON.parse(jsonText);
     } catch (error: any) {
-        console.error('❌ Gemini JSON Parse Error:', error.message);
-        console.error('Raw response:', error);
+        console.error('❌ Gemini JSON Parse Error:', error.message, 'Raw text:', text.substring(0, 200));
         throw new Error('Failed to parse AI JSON response');
     }
 };

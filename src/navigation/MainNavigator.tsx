@@ -8,6 +8,10 @@ import SessionSummaryScreen from '../screens/interview/SessionSummaryScreen';
 import ProgressScreen from '../screens/progress/ProgressScreen';
 import ProfileScreen from '../screens/profile/ProfileScreen';
 import { MainTabParamList } from '../types';
+import HomeIcon from '../../assets/icons/Home';
+import BriefcaseIcon from '../../assets/icons/Briefcase';
+import TimelineIcon from '../../assets/icons/Timeline';
+import ProfileIcon from '../../assets/icons/Profile';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 const InterviewStack = createStackNavigator();
@@ -45,22 +49,37 @@ const MainNavigator = () => {
             <Tab.Screen
                 name="Home"
                 component={HomeScreen}
-                options={{ title: 'Home', headerShown: true }}
+                options={{
+                    title: 'Home',
+                    headerShown: true,
+                    tabBarIcon: ({ color, size }) => <HomeIcon width={size} height={size} color={color} />,
+                }}
             />
             <Tab.Screen
                 name="Interview"
                 component={InterviewStackNavigator}
-                options={{ title: 'Interview' }}
+                options={{
+                    title: 'Interview',
+                    tabBarIcon: ({ color, size }) => <BriefcaseIcon width={size} height={size} color={color} />,
+                }}
             />
             <Tab.Screen
                 name="Progress"
                 component={ProgressScreen}
-                options={{ title: 'Progress', headerShown: true }}
+                options={{
+                    title: 'Progress',
+                    headerShown: true,
+                    tabBarIcon: ({ color, size }) => <TimelineIcon width={size} height={size} color={color} />,
+                }}
             />
             <Tab.Screen
                 name="Profile"
                 component={ProfileScreen}
-                options={{ title: 'Profile', headerShown: true }}
+                options={{
+                    title: 'Profile',
+                    headerShown: true,
+                    tabBarIcon: ({ color, size }) => <ProfileIcon width={size} height={size} color={color} />,
+                }}
             />
         </Tab.Navigator>
     );

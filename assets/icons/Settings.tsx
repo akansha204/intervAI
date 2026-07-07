@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Svg, { Path, Circle } from 'react-native-svg';
-import { scale } from '../../app/helpers/scaler';
+import { scale } from '../../src/helpers/scaler';
 
 type SettingsProps = {
     width?: number;

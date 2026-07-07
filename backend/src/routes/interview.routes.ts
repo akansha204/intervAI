@@ -7,6 +7,9 @@ const router = Router();
 // All interview routes require authentication
 router.use(authenticate);
 
+// Dashboard
+router.get('/dashboard', interviewController.getDashboard);
+
 // Session management
 router.post('/start', interviewController.startSession);
 router.post('/:sessionId/complete', interviewController.completeSession);

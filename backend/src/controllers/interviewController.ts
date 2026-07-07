@@ -321,6 +321,64 @@ export const completeSession = async (req: AuthRequest, res: Response) => {
 };
 
 /**
+ * Get dashboard data: user stats + recent sessions
+ */
+export const getDashboard = async (req: AuthRequest, res: Response) => {
+    try {
+        if (!req.user) {
+            return res.status(401).json({
+                status: 'error',
+                message: 'Not authenticated',
+            });
+        }
+
+        const [stats, recentSessions] = await Promise.all([
+            prisma.userStats.findUnique({ where: { userId: req.user.id } }),
+            prisma.interviewSession.findMany({
+                where: { userId: req.user.id },
+                orderBy: { createdAt: 'desc' },
+                take: 5,
+                include: { answers: true },
+            }),
+        ]);
+
+        const startOfToday = new Date();
+        startOfToday.setHours(0, 0, 0, 0);
+        const completedToday = await prisma.interviewSession.count({
+            where: {
+                userId: req.user.id,
+                status: 'completed',
+                completedAt: { gte: startOfToday },
+            },
+        });
+
+        return res.status(200).json({
+            status: 'success',
+            data: {
+                stats: {
+                    totalSessions: stats?.totalSessions || 0,
+                    averageScore: stats?.averageScore || 0,
+                    dailyStreak: stats?.dailyStreak || 0,
+                    completedToday,
+                },
+                recentSessions: recentSessions.map((session: any) => ({
+                    id: session.id,
+                    type: session.type,
+                    score: session.score,
+                    date: session.createdAt,
+                    questionsCount: session.answers.length,
+                })),
+            },
+        });
+    } catch (error: any) {
+        return res.status(500).json({
+            status: 'error',
+            message: error.message || 'Failed to get dashboard data',
+        });
+    }
+};
+
+/**
  * Get session feedback
  */
 export const getSessionFeedback = async (req: AuthRequest, res: Response) => {

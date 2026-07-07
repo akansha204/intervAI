@@ -5,48 +5,78 @@ import {
     ScrollView,
     TouchableOpacity,
     RefreshControl,
-    Alert,
+    ActivityIndicator,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { RootState, AppDispatch } from '../../store';
 import { logout } from '../../store/slices/authSlice';
+import { getDashboard, DashboardStats, DashboardSession } from '../../services/interviewService';
+
+const formatRelativeDate = (isoDate: string) => {
+    const date = new Date(isoDate);
+    const diffMs = Date.now() - date.getTime();
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    if (diffHours < 1) return 'Just now';
+    if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+    const diffDays = Math.floor(diffHours / 24);
+    if (diffDays === 1) return 'Yesterday';
+    return `${diffDays} days ago`;
+};
 
 const HomeScreen = () => {
     const navigation = useNavigation();
     const dispatch = useDispatch<AppDispatch>();
     const { user } = useSelector((state: RootState) => state.auth);
     const [refreshing, setRefreshing] = React.useState(false);
+    const [loading, setLoading] = React.useState(true);
+    const [stats, setStats] = React.useState<DashboardStats>({
+        totalSessions: 0,
+        averageScore: 0,
+        dailyStreak: 0,
+        completedToday: 0,
+    });
+    const [recentSessions, setRecentSessions] = React.useState<DashboardSession[]>([]);
+
+    const loadDashboard = React.useCallback(async () => {
+        try {
+            const data = await getDashboard();
+            setStats(data.stats);
+            setRecentSessions(data.recentSessions);
+        } catch (error: any) {
+            console.error('❌ Failed to load dashboard:', error.message);
+        } finally {
+            setLoading(false);
+            setRefreshing(false);
+        }
+    }, []);
+
+    useFocusEffect(
+        React.useCallback(() => {
+            loadDashboard();
+        }, [loadDashboard])
+    );
 
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
-        setTimeout(() => setRefreshing(false), 1000);
-    }, []);
+        loadDashboard();
+    }, [loadDashboard]);
 
     const handleLogout = () => {
         dispatch(logout());
     };
 
     const handleStartInterview = () => {
-        console.log('🎯 Start Interview button pressed!');
-        Alert.alert('Button Pressed!', 'Navigating to Interview...');
-        // Navigate to Interview tab
         navigation.navigate('Interview' as never);
-        console.log('📍 Navigation called');
     };
 
-    const stats = {
-        totalSessions: 12,
-        averageScore: 8.5,
-        dailyStreak: 5,
-        completedToday: 2,
-    };
-
-    const recentSessions = [
-        { id: '1', type: 'Behavioral', score: 8.5, date: '2 hours ago', questionsCount: 5 },
-        { id: '2', type: 'Technical', score: 7.8, date: 'Yesterday', questionsCount: 8 },
-        { id: '3', type: 'Behavioral', score: 9.2, date: '2 days ago', questionsCount: 6 },
-    ];
+    if (loading) {
+        return (
+            <View style={{ flex: 1, backgroundColor: '#f5f5f5', justifyContent: 'center', alignItems: 'center' }}>
+                <ActivityIndicator size="large" color="#007AFF" />
+            </View>
+        );
+    }
 
     return (
         <ScrollView
@@ -71,7 +101,7 @@ const HomeScreen = () => {
                     <Text style={{ fontSize: 14, color: '#666', marginTop: 4 }}>Total Sessions</Text>
                 </View>
                 <View style={{ flex: 1, backgroundColor: '#fff', padding: 20, borderRadius: 12, alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4, elevation: 3 }}>
-                    <Text style={{ fontSize: 32, fontWeight: 'bold', color: '#007AFF' }}>{stats.averageScore}</Text>
+                    <Text style={{ fontSize: 32, fontWeight: 'bold', color: '#007AFF' }}>{stats.averageScore.toFixed(1)}</Text>
                     <Text style={{ fontSize: 14, color: '#666', marginTop: 4 }}>Avg Score</Text>
                 </View>
             </View>
@@ -103,12 +133,12 @@ const HomeScreen = () => {
             {recentSessions.map((session) => (
                 <TouchableOpacity key={session.id} style={{ backgroundColor: '#fff', marginHorizontal: 20, marginBottom: 12, padding: 16, borderRadius: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2, elevation: 2 }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                        <Text style={{ fontSize: 16, fontWeight: '600', color: '#333' }}>{session.type}</Text>
-                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#007AFF' }}>{session.score}/10</Text>
+                        <Text style={{ fontSize: 16, fontWeight: '600', color: '#333', textTransform: 'capitalize' }}>{session.type.replace('-', ' ')}</Text>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#007AFF' }}>{session.score != null ? `${session.score.toFixed(1)}/10` : '—'}</Text>
                     </View>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                         <Text style={{ fontSize: 14, color: '#666' }}>{session.questionsCount} questions</Text>
-                        <Text style={{ fontSize: 14, color: '#999' }}>{session.date}</Text>
+                        <Text style={{ fontSize: 14, color: '#999' }}>{formatRelativeDate(session.date)}</Text>
                     </View>
                 </TouchableOpacity>
             ))}
