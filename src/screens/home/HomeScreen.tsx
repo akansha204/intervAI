@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
-    View,
-    Text,
-    ScrollView,
-    TouchableOpacity,
-    RefreshControl,
-    ActivityIndicator,
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  RefreshControl,
+  ActivityIndicator,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
@@ -23,12 +23,18 @@ const formatRelativeDate = (isoDate: string) => {
     if (diffDays === 1) return 'Yesterday';
     return `${diffDays} days ago`;
 };
+import { colors } from '../../styles/colors';
+import { texts } from '../../styles/texts';
+import shadowStyles from '../../styles/shadow';
+import { scale } from '../../helpers/scaler';
+import VSpacer from '../../components/base/spacer/VSpacer/VSpacer';
+import HSpacer from '../../components/base/spacer/HSpacer/HSpacer';
 
 const HomeScreen = () => {
-    const navigation = useNavigation();
-    const dispatch = useDispatch<AppDispatch>();
-    const { user } = useSelector((state: RootState) => state.auth);
-    const [refreshing, setRefreshing] = React.useState(false);
+  const navigation = useNavigation();
+  const dispatch = useDispatch<AppDispatch>();
+  const { user } = useSelector((state: RootState) => state.auth);
+  const [refreshing, setRefreshing] = React.useState(false);
     const [loading, setLoading] = React.useState(true);
     const [stats, setStats] = React.useState<DashboardStats>({
         totalSessions: 0,
@@ -57,14 +63,14 @@ const HomeScreen = () => {
         }, [loadDashboard])
     );
 
-    const onRefresh = React.useCallback(() => {
-        setRefreshing(true);
-        loadDashboard();
-    }, [loadDashboard]);
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    loadDashboard();
+  }, [loadDashboard]);
 
-    const handleLogout = () => {
-        dispatch(logout());
-    };
+  const handleLogout = () => {
+    dispatch(logout());
+  };
 
     const handleStartInterview = () => {
         navigation.navigate('Interview' as never);
@@ -78,21 +84,59 @@ const HomeScreen = () => {
         );
     }
 
-    return (
-        <ScrollView
-            style={{ flex: 1, backgroundColor: '#f5f5f5' }}
-            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
-
-            {/* Header */}
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 20, backgroundColor: '#fff' }}>
-                <View>
-                    <Text style={{ fontSize: 16, color: '#666' }}>Hello,</Text>
-                    <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#333', marginTop: 4 }}>{user?.name || 'User'}</Text>
-                </View>
-                <TouchableOpacity onPress={handleLogout} style={{ paddingHorizontal: 16, paddingVertical: 8, borderRadius: 8, borderWidth: 1, borderColor: '#ff3b30' }}>
-                    <Text style={{ color: '#ff3b30', fontSize: 14, fontWeight: '600' }}>Logout</Text>
-                </TouchableOpacity>
-            </View>
+  return (
+    <ScrollView
+      style={{ flex: 1, backgroundColor: colors.Greyscale[0] }}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
+      {/* Header */}
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: scale(20),
+          backgroundColor: colors.Others.white,
+        }}
+      >
+        <View>
+          <Text
+            style={[
+              texts.body.medium.regular,
+              { color: colors.Greyscale[500] },
+            ]}
+          >
+            Hello,
+          </Text>
+          <VSpacer height={4} />
+          <Text
+            style={[texts.heading.heading4, { color: colors.Greyscale[900] }]}
+          >
+            {user?.name || 'User'}
+          </Text>
+        </View>
+        <TouchableOpacity
+          onPress={handleLogout}
+          style={{
+            paddingHorizontal: scale(16),
+            paddingVertical: scale(8),
+            borderRadius: scale(8),
+            borderWidth: scale(1),
+            borderColor: colors.Alert.Error[100],
+          }}
+        >
+          <Text
+            style={[
+              texts.body.small.semibold,
+              { color: colors.Alert.Error[100] },
+            ]}
+          >
+            Logout
+          </Text>
+        </TouchableOpacity>
+      </View>
 
             {/* Stats Cards */}
             <View style={{ flexDirection: 'row', paddingHorizontal: 20, marginTop: 16, gap: 12 }}>
@@ -106,21 +150,31 @@ const HomeScreen = () => {
                 </View>
             </View>
 
-            <View style={{ flexDirection: 'row', paddingHorizontal: 20, marginTop: 16, gap: 12 }}>
-                <View style={{ flex: 1, backgroundColor: '#fff', padding: 20, borderRadius: 12, alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4, elevation: 3 }}>
-                    <Text style={{ fontSize: 32, fontWeight: 'bold', color: '#007AFF' }}>{stats.dailyStreak}</Text>
-                    <Text style={{ fontSize: 14, color: '#666', marginTop: 4 }}>Day Streak</Text>
-                </View>
-                <View style={{ flex: 1, backgroundColor: '#fff', padding: 20, borderRadius: 12, alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4, elevation: 3 }}>
-                    <Text style={{ fontSize: 32, fontWeight: 'bold', color: '#007AFF' }}>{stats.completedToday}</Text>
-                    <Text style={{ fontSize: 14, color: '#666', marginTop: 4 }}>Today</Text>
-                </View>
-            </View>
+      <VSpacer height={16} />
+      <View style={{ flexDirection: 'row', paddingHorizontal: scale(20) }}>
+        {renderStatCard(stats.dailyStreak, 'Day Streak')}
+        <HSpacer width={12} />
+        {renderStatCard(stats.completedToday, 'Today')}
+      </View>
 
-            {/* Quick Start Button */}
-            <TouchableOpacity onPress={handleStartInterview} style={{ backgroundColor: '#007AFF', marginHorizontal: 20, marginTop: 24, padding: 16, borderRadius: 12, alignItems: 'center' }}>
-                <Text style={{ color: '#fff', fontSize: 18, fontWeight: '600' }}>Start New Interview</Text>
-            </TouchableOpacity>
+      {/* Quick Start Button */}
+      <VSpacer height={24} />
+      <TouchableOpacity
+        onPress={handleStartInterview}
+        style={{
+          backgroundColor: colors.primary[500],
+          marginHorizontal: scale(20),
+          padding: scale(16),
+          borderRadius: scale(12),
+          alignItems: 'center',
+        }}
+      >
+        <Text
+          style={[texts.body.large.semibold, { color: colors.Others.white }]}
+        >
+          Start New Interview
+        </Text>
+      </TouchableOpacity>
 
             {/* Recent Sessions */}
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, marginTop: 32, marginBottom: 16 }}>
@@ -143,14 +197,27 @@ const HomeScreen = () => {
                 </TouchableOpacity>
             ))}
 
-            {recentSessions.length === 0 && (
-                <View style={{ alignItems: 'center', paddingVertical: 40 }}>
-                    <Text style={{ fontSize: 18, fontWeight: '600', color: '#666' }}>No sessions yet</Text>
-                    <Text style={{ fontSize: 14, color: '#999', marginTop: 8 }}>Start your first interview to see results here</Text>
-                </View>
-            )}
-        </ScrollView>
-    );
+      {recentSessions.length === 0 && (
+        <View style={{ alignItems: 'center', paddingVertical: scale(40) }}>
+          <Text
+            style={[
+              texts.body.large.semibold,
+              { color: colors.Greyscale[500] },
+            ]}
+          >
+            No sessions yet
+          </Text>
+          <VSpacer height={8} />
+          <Text
+            style={[texts.body.small.regular, { color: colors.Greyscale[400] }]}
+          >
+            Start your first interview to see results here
+          </Text>
+        </View>
+      )}
+      <VSpacer height={24} />
+    </ScrollView>
+  );
 };
 
 export default HomeScreen;

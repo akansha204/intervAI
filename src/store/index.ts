@@ -3,17 +3,10 @@ import authReducer from './slices/authSlice';
 import interviewReducer from './slices/interviewSlice';
 
 export const store = configureStore({
-    reducer: {
-        auth: authReducer,
-        interview: interviewReducer,
-    },
-    middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware({
-            serializableCheck: {
-                // Ignore these action types for AsyncStorage
-                ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
-            },
-        }),
+  reducer: {
+    auth: authReducer,
+    interview: interviewReducer,
+  },
 });
 
 export type RootState = ReturnType<typeof store.getState>;

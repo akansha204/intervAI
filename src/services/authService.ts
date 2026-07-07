@@ -4,34 +4,37 @@ import { AuthResponse, User } from '../types';
 /**
  * Login user
  */
-export const login = async (email: string, password: string): Promise<AuthResponse> => {
-    const response = await api.post('/auth/login', { email, password });
-    return response.data.data;
+export const login = async (
+  email: string,
+  password: string,
+): Promise<AuthResponse> => {
+  const response = await api.post('/auth/login', { email, password });
+  return response.data.data;
 };
 
 /**
  * Register user
  */
 export const register = async (
-    email: string,
-    password: string,
-    name: string
+  email: string,
+  password: string,
+  name: string,
 ): Promise<AuthResponse> => {
-    const response = await api.post('/auth/register', { email, password, name });
-    return response.data.data;
+  const response = await api.post('/auth/register', { email, password, name });
+  return response.data.data;
 };
 
 /**
  * Get user profile
  */
 export const getProfile = async (): Promise<User> => {
-    const response = await api.get('/auth/profile');
-    return response.data.data.user;
+  const response = await api.get('/auth/profile');
+  return response.data.data.user;
 };
 
 /**
  * Logout user
  */
 export const logout = async (): Promise<void> => {
-    await api.post('/auth/logout');
+  await api.post('/auth/logout');
 };

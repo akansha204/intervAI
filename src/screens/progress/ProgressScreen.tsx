@@ -1,160 +1,274 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  RefreshControl,
+} from 'react-native';
+import { colors } from '../../styles/colors';
+import { texts } from '../../styles/texts';
+import shadowStyles from '../../styles/shadow';
+import { scale } from '../../helpers/scaler';
+import VSpacer from '../../components/base/spacer/VSpacer/VSpacer';
+import AnimatedProgressBar from '../../components/common/AnimatedProgressBar';
+import { progressSessions } from '../../../assets/staticData/staticData';
 
 const ProgressScreen = () => {
-    const navigation = useNavigation();
-    const [refreshing, setRefreshing] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
-    const onRefresh = () => {
-        setRefreshing(true);
-        // TODO: Fetch history from API
-        setTimeout(() => setRefreshing(false), 1000);
-    };
+  const onRefresh = () => {
+    setRefreshing(true);
+    setTimeout(() => setRefreshing(false), 1000);
+  };
 
-    // Mock data - will be replaced with real data from API
-    const sessions = [
+  const sessions = progressSessions;
+
+  const stats = {
+    totalSessions: sessions.length,
+    averageScore: (
+      sessions.reduce((sum, s) => sum + s.score, 0) / sessions.length
+    ).toFixed(1),
+    bestScore: Math.max(...sessions.map(s => s.score)).toFixed(1),
+    improvement: '+12%',
+  };
+
+  const getScoreColor = (score: number) => {
+    if (score >= 8) return colors.Alert.Success[100];
+    if (score >= 6) return colors.Alert.Warning[100];
+    return colors.Alert.Error[100];
+  };
+
+  const renderStatCard = (
+    value: string | number,
+    label: string,
+    valueColor: string,
+  ) => (
+    <View
+      style={[
         {
-            id: '1',
-            type: 'Behavioral',
-            score: 8.5,
-            date: '2024-01-15',
-            time: '2:30 PM',
-            questionsCount: 5,
-            status: 'completed',
+          flex: 1,
+          minWidth: '45%',
+          backgroundColor: colors.Others.white,
+          padding: scale(16),
+          borderRadius: scale(12),
         },
-        {
-            id: '2',
-            type: 'Technical',
-            score: 7.8,
-            date: '2024-01-14',
-            time: '10:15 AM',
-            questionsCount: 8,
-            status: 'completed',
-        },
-        {
-            id: '3',
-            type: 'System Design',
-            score: 9.2,
-            date: '2024-01-13',
-            time: '4:45 PM',
-            questionsCount: 6,
-            status: 'completed',
-        },
-        {
-            id: '4',
-            type: 'Behavioral',
-            score: 6.5,
-            date: '2024-01-12',
-            time: '11:00 AM',
-            questionsCount: 4,
-            status: 'completed',
-        },
-    ];
+        shadowStyles.Medium,
+      ]}
+    >
+      <Text style={[texts.heading.heading4, { color: valueColor }]}>
+        {value}
+      </Text>
+      <VSpacer height={4} />
+      <Text
+        style={[texts.body.small.regular, { color: colors.Greyscale[500] }]}
+      >
+        {label}
+      </Text>
+    </View>
+  );
 
-    const stats = {
-        totalSessions: sessions.length,
-        averageScore: (sessions.reduce((sum, s) => sum + s.score, 0) / sessions.length).toFixed(1),
-        bestScore: Math.max(...sessions.map(s => s.score)).toFixed(1),
-        improvement: '+12%',
-    };
+  return (
+    <ScrollView
+      style={{ flex: 1, backgroundColor: colors.Greyscale[0] }}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
+      <View
+        style={{ backgroundColor: colors.Others.white, padding: scale(20) }}
+      >
+        <Text
+          style={[texts.heading.heading3, { color: colors.Greyscale[900] }]}
+        >
+          Your Progress
+        </Text>
+        <VSpacer height={4} />
+        <Text
+          style={[texts.body.medium.regular, { color: colors.Greyscale[500] }]}
+        >
+          Track your interview performance
+        </Text>
 
-    const getScoreColor = (score: number) => {
-        if (score >= 8) return '#34C759';
-        if (score >= 6) return '#FF9500';
-        return '#FF3B30';
-    };
+        <VSpacer height={20} />
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <Text
+            style={[
+              texts.body.small.semibold,
+              { color: colors.Greyscale[700] },
+            ]}
+          >
+            Average score
+          </Text>
+          <Text
+            style={[texts.body.small.semibold, { color: colors.primary[500] }]}
+          >
+            {stats.averageScore} / 10
+          </Text>
+        </View>
+        <VSpacer height={8} />
+        <AnimatedProgressBar progress={Number(stats.averageScore) / 10} />
+      </View>
+      <View
+        style={{
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          padding: scale(20),
+          gap: scale(12),
+        }}
+      >
+        {renderStatCard(
+          stats.totalSessions,
+          'Total Sessions',
+          colors.primary[500],
+        )}
+        {renderStatCard(
+          stats.averageScore,
+          'Avg Score',
+          colors.Alert.Success[100],
+        )}
+        {renderStatCard(
+          stats.bestScore,
+          'Best Score',
+          colors.Alert.Warning[100],
+        )}
+        {renderStatCard(
+          stats.improvement,
+          'Improvement',
+          colors.Alert.Success[100],
+        )}
+      </View>
 
-    return (
-        <ScrollView
-            style={{ flex: 1, backgroundColor: '#f5f5f5' }}
-            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+      <View style={{ paddingHorizontal: scale(20), marginTop: scale(8) }}>
+        <Text
+          style={[texts.heading.heading5, { color: colors.Greyscale[900] }]}
+        >
+          Recent Sessions
+        </Text>
+        <VSpacer height={16} />
 
-            {/* Header */}
-            <View style={{ backgroundColor: '#fff', padding: 20 }}>
-                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#333', marginBottom: 4 }}>
-                    Your Progress
+        {sessions.map(session => (
+          <TouchableOpacity
+            key={session.id}
+            style={[
+              {
+                backgroundColor: colors.Others.white,
+                padding: scale(16),
+                borderRadius: scale(12),
+                marginBottom: scale(12),
+              },
+              shadowStyles.Small,
+            ]}
+          >
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <View style={{ flex: 1 }}>
+                <Text
+                  style={[
+                    texts.body.large.semibold,
+                    { color: colors.Greyscale[900] },
+                  ]}
+                >
+                  {session.type}
                 </Text>
-                <Text style={{ fontSize: 16, color: '#666' }}>
-                    Track your interview performance
+                <VSpacer height={4} />
+                <Text
+                  style={[
+                    texts.body.small.regular,
+                    { color: colors.Greyscale[500] },
+                  ]}
+                >
+                  {session.date} • {session.time}
                 </Text>
+              </View>
+              <View
+                style={{
+                  backgroundColor: getScoreColor(session.score),
+                  paddingHorizontal: scale(16),
+                  paddingVertical: scale(8),
+                  borderRadius: scale(20),
+                }}
+              >
+                <Text
+                  style={[
+                    texts.body.medium.bold,
+                    { color: colors.Others.white },
+                  ]}
+                >
+                  {session.score}/10
+                </Text>
+              </View>
             </View>
 
-            {/* Stats Grid */}
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', padding: 20, gap: 12 }}>
-                <View style={{ flex: 1, minWidth: '45%', backgroundColor: '#fff', padding: 16, borderRadius: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4, elevation: 3 }}>
-                    <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#007AFF' }}>{stats.totalSessions}</Text>
-                    <Text style={{ fontSize: 14, color: '#666', marginTop: 4 }}>Total Sessions</Text>
-                </View>
-                <View style={{ flex: 1, minWidth: '45%', backgroundColor: '#fff', padding: 16, borderRadius: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4, elevation: 3 }}>
-                    <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#34C759' }}>{stats.averageScore}</Text>
-                    <Text style={{ fontSize: 14, color: '#666', marginTop: 4 }}>Avg Score</Text>
-                </View>
-                <View style={{ flex: 1, minWidth: '45%', backgroundColor: '#fff', padding: 16, borderRadius: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4, elevation: 3 }}>
-                    <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FF9500' }}>{stats.bestScore}</Text>
-                    <Text style={{ fontSize: 14, color: '#666', marginTop: 4 }}>Best Score</Text>
-                </View>
-                <View style={{ flex: 1, minWidth: '45%', backgroundColor: '#fff', padding: 16, borderRadius: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4, elevation: 3 }}>
-                    <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#34C759' }}>{stats.improvement}</Text>
-                    <Text style={{ fontSize: 14, color: '#666', marginTop: 4 }}>Improvement</Text>
-                </View>
-            </View>
-
-            {/* Session History */}
-            <View style={{ paddingHorizontal: 20, marginTop: 8 }}>
-                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#333', marginBottom: 16 }}>
-                    Recent Sessions
+            <VSpacer height={12} />
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                paddingTop: scale(12),
+                borderTopWidth: scale(1),
+                borderTopColor: colors.Greyscale[100],
+              }}
+            >
+              <Text
+                style={[
+                  texts.body.small.regular,
+                  { color: colors.Greyscale[500] },
+                ]}
+              >
+                {session.questionsCount} questions
+              </Text>
+              <TouchableOpacity>
+                <Text
+                  style={[
+                    texts.body.small.semibold,
+                    { color: colors.primary[500] },
+                  ]}
+                >
+                  View Details →
                 </Text>
-
-                {sessions.map((session) => (
-                    <TouchableOpacity
-                        key={session.id}
-                        style={{ backgroundColor: '#fff', padding: 16, borderRadius: 12, marginBottom: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2, elevation: 2 }}>
-
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                            <View style={{ flex: 1 }}>
-                                <Text style={{ fontSize: 18, fontWeight: '600', color: '#333', marginBottom: 4 }}>
-                                    {session.type}
-                                </Text>
-                                <Text style={{ fontSize: 14, color: '#666' }}>
-                                    {session.date} • {session.time}
-                                </Text>
-                            </View>
-                            <View style={{ backgroundColor: getScoreColor(session.score), paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20 }}>
-                                <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 16 }}>
-                                    {session.score}/10
-                                </Text>
-                            </View>
-                        </View>
-
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingTop: 12, borderTopWidth: 1, borderTopColor: '#E5E5EA' }}>
-                            <Text style={{ fontSize: 14, color: '#666' }}>
-                                {session.questionsCount} questions
-                            </Text>
-                            <TouchableOpacity>
-                                <Text style={{ fontSize: 14, color: '#007AFF', fontWeight: '600' }}>
-                                    View Details →
-                                </Text>
-                            </TouchableOpacity>
-                        </View>
-                    </TouchableOpacity>
-                ))}
-
-                {sessions.length === 0 && (
-                    <View style={{ alignItems: 'center', paddingVertical: 40 }}>
-                        <Text style={{ fontSize: 18, fontWeight: '600', color: '#666' }}>
-                            No sessions yet
-                        </Text>
-                        <Text style={{ fontSize: 14, color: '#999', marginTop: 8 }}>
-                            Complete your first interview to see your progress
-                        </Text>
-                    </View>
-                )}
+              </TouchableOpacity>
             </View>
+          </TouchableOpacity>
+        ))}
 
-            <View style={{ height: 40 }} />
-        </ScrollView>
-    );
+        {sessions.length === 0 && (
+          <View style={{ alignItems: 'center', paddingVertical: scale(40) }}>
+            <Text
+              style={[
+                texts.body.large.semibold,
+                { color: colors.Greyscale[500] },
+              ]}
+            >
+              No sessions yet
+            </Text>
+            <VSpacer height={8} />
+            <Text
+              style={[
+                texts.body.small.regular,
+                { color: colors.Greyscale[400] },
+              ]}
+            >
+              Complete your first interview to see your progress
+            </Text>
+          </View>
+        )}
+      </View>
+
+      <VSpacer height={40} />
+    </ScrollView>
+  );
 };
 
 export default ProgressScreen;

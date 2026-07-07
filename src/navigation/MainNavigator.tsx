@@ -7,35 +7,67 @@ import InterviewScreen from '../screens/interview/InterviewScreen';
 import SessionSummaryScreen from '../screens/interview/SessionSummaryScreen';
 import ProgressScreen from '../screens/progress/ProgressScreen';
 import ProfileScreen from '../screens/profile/ProfileScreen';
+import CompanyPrepScreen from '../screens/company/CompanyPrepScreen';
+import FeedbackDetailScreen from '../screens/feedback/FeedbackDetailScreen';
+import ResumeInputScreen from '../screens/resume/ResumeInputScreen';
 import { MainTabParamList } from '../types';
 import HomeIcon from '../../assets/icons/Home';
 import BriefcaseIcon from '../../assets/icons/Briefcase';
 import TimelineIcon from '../../assets/icons/Timeline';
 import ProfileIcon from '../../assets/icons/Profile';
+import { colors } from '../styles/colors';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 const InterviewStack = createStackNavigator();
+const ProfileStack = createStackNavigator();
 
 function InterviewStackNavigator() {
-    return (
-        <InterviewStack.Navigator>
-            <InterviewStack.Screen
-                name="InterviewSetup"
-                component={InterviewSetupScreen}
-                options={{ title: 'Start Interview' }}
-            />
-            <InterviewStack.Screen
-                name="InterviewSession"
-                component={InterviewScreen}
-                options={{ title: 'Interview', headerLeft: () => null }}
-            />
-            <InterviewStack.Screen
-                name="SessionSummary"
-                component={SessionSummaryScreen}
-                options={{ title: 'Session Summary', headerLeft: () => null }}
-            />
-        </InterviewStack.Navigator>
-    );
+  return (
+    <InterviewStack.Navigator>
+      <InterviewStack.Screen
+        name="InterviewSetup"
+        component={InterviewSetupScreen}
+        options={{ title: 'Start Interview' }}
+      />
+      <InterviewStack.Screen
+        name="CompanyPrep"
+        component={CompanyPrepScreen}
+        options={{ title: 'Company Prep' }}
+      />
+      <InterviewStack.Screen
+        name="InterviewSession"
+        component={InterviewScreen}
+        options={{ title: 'Interview', headerLeft: () => null }}
+      />
+      <InterviewStack.Screen
+        name="SessionSummary"
+        component={SessionSummaryScreen}
+        options={{ title: 'Session Summary', headerLeft: () => null }}
+      />
+      <InterviewStack.Screen
+        name="FeedbackDetail"
+        component={FeedbackDetailScreen}
+        options={{ title: 'Feedback' }}
+      />
+    </InterviewStack.Navigator>
+  );
+}
+
+function ProfileStackNavigator() {
+  return (
+    <ProfileStack.Navigator>
+      <ProfileStack.Screen
+        name="ProfileHome"
+        component={ProfileScreen}
+        options={{ title: 'Profile' }}
+      />
+      <ProfileStack.Screen
+        name="ResumeInput"
+        component={ResumeInputScreen}
+        options={{ title: 'My Resume' }}
+      />
+    </ProfileStack.Navigator>
+  );
 }
 
 const MainNavigator = () => {

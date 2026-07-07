@@ -5,109 +5,267 @@ import { useNavigation } from '@react-navigation/native';
 import { RootState, AppDispatch } from '../../store';
 import { clearSession } from '../../store/slices/interviewSlice';
 import Button from '../../components/common/Button';
+import AnimatedNumber from '../../components/common/AnimatedNumber';
+import { colors } from '../../styles/colors';
+import { texts } from '../../styles/texts';
+import { scale } from '../../helpers/scaler';
+import VSpacer from '../../components/base/spacer/VSpacer/VSpacer';
+import HSpacer from '../../components/base/spacer/HSpacer/HSpacer';
 
 const SessionSummaryScreen = () => {
-    const navigation = useNavigation();
-    const dispatch = useDispatch<AppDispatch>();
-    const { questionsAnswered, currentSession } = useSelector((state: RootState) => state.interview);
+  const navigation = useNavigation();
+  const dispatch = useDispatch<AppDispatch>();
+  const { questionsAnswered, currentSession } = useSelector(
+    (state: RootState) => state.interview,
+  );
 
-    const calculateAverageScore = () => {
-        if (questionsAnswered.length === 0) return 0;
-        const total = questionsAnswered.reduce((sum, qa) => sum + (qa.feedback?.score || 0), 0);
-        return (total / questionsAnswered.length).toFixed(1);
-    };
-
-    const handleFinish = () => {
-        dispatch(clearSession());
-        navigation.navigate('Home' as never);
-    };
-
-    const averageScore = calculateAverageScore();
-
-    return (
-        <ScrollView style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
-            {/* Header Card */}
-            <View style={{ backgroundColor: '#007AFF', padding: 24, alignItems: 'center' }}>
-                <Text style={{ fontSize: 18, color: '#fff', marginBottom: 8 }}>Session Complete!</Text>
-                <Text style={{ fontSize: 48, fontWeight: 'bold', color: '#fff' }}>{averageScore}/10</Text>
-                <Text style={{ fontSize: 16, color: '#fff', opacity: 0.9, marginTop: 4 }}>
-                    Average Score
-                </Text>
-            </View>
-
-            {/* Stats */}
-            <View style={{ flexDirection: 'row', padding: 20, gap: 12 }}>
-                <View style={{ flex: 1, backgroundColor: '#fff', padding: 16, borderRadius: 12, alignItems: 'center' }}>
-                    <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#333' }}>{questionsAnswered.length}</Text>
-                    <Text style={{ fontSize: 14, color: '#666', marginTop: 4 }}>Questions</Text>
-                </View>
-                <View style={{ flex: 1, backgroundColor: '#fff', padding: 16, borderRadius: 12, alignItems: 'center' }}>
-                    <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#333' }}>{currentSession?.type || 'N/A'}</Text>
-                    <Text style={{ fontSize: 14, color: '#666', marginTop: 4 }}>Type</Text>
-                </View>
-            </View>
-
-            {/* Question Breakdown */}
-            <View style={{ paddingHorizontal: 20 }}>
-                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#333', marginBottom: 16 }}>
-                    Question Breakdown
-                </Text>
-
-                {questionsAnswered.map((qa, index) => (
-                    <View key={index} style={{ backgroundColor: '#fff', padding: 16, borderRadius: 12, marginBottom: 12 }}>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                            <Text style={{ fontSize: 16, fontWeight: '600', color: '#333' }}>
-                                Question {index + 1}
-                            </Text>
-                            <View style={{ backgroundColor: qa.feedback && qa.feedback.score >= 7 ? '#34C759' : qa.feedback && qa.feedback.score >= 5 ? '#FF9500' : '#FF3B30', paddingHorizontal: 12, paddingVertical: 4, borderRadius: 12 }}>
-                                <Text style={{ color: '#fff', fontWeight: '600', fontSize: 14 }}>
-                                    {qa.feedback?.score || 0}/10
-                                </Text>
-                            </View>
-                        </View>
-
-                        <Text style={{ fontSize: 14, color: '#666', marginBottom: 12, lineHeight: 20 }}>
-                            {qa.question.text}
-                        </Text>
-
-                        {qa.feedback && (
-                            <>
-                                <View style={{ borderTopWidth: 1, borderTopColor: '#E5E5EA', paddingTop: 12, marginTop: 8 }}>
-                                    <Text style={{ fontSize: 14, fontWeight: '600', color: '#333', marginBottom: 6 }}>
-                                        Strengths:
-                                    </Text>
-                                    {qa.feedback.strengths.map((strength, i) => (
-                                        <Text key={i} style={{ fontSize: 13, color: '#34C759', marginBottom: 4 }}>
-                                            ✓ {strength}
-                                        </Text>
-                                    ))}
-
-                                    <Text style={{ fontSize: 14, fontWeight: '600', color: '#333', marginTop: 12, marginBottom: 6 }}>
-                                        Areas to Improve:
-                                    </Text>
-                                    {qa.feedback.improvements.map((improvement, i) => (
-                                        <Text key={i} style={{ fontSize: 13, color: '#FF9500', marginBottom: 4 }}>
-                                            • {improvement}
-                                        </Text>
-                                    ))}
-                                </View>
-                            </>
-                        )}
-                    </View>
-                ))}
-            </View>
-
-            {/* Actions */}
-            <View style={{ padding: 20, paddingBottom: 40 }}>
-                <Button title="Back to Home" onPress={handleFinish} />
-                <TouchableOpacity style={{ marginTop: 12, padding: 16, alignItems: 'center' }}>
-                    <Text style={{ fontSize: 16, color: '#007AFF', fontWeight: '600' }}>
-                        Start New Interview
-                    </Text>
-                </TouchableOpacity>
-            </View>
-        </ScrollView>
+  const calculateAverageScore = () => {
+    if (questionsAnswered.length === 0) return 0;
+    const total = questionsAnswered.reduce(
+      (sum, qa) => sum + (qa.feedback?.score || 0),
+      0,
     );
+    return (total / questionsAnswered.length).toFixed(1);
+  };
+
+  const handleFinish = () => {
+    dispatch(clearSession());
+    navigation.navigate('Home' as never);
+  };
+
+  const getScoreBadgeColor = (score: number) => {
+    if (score >= 7) return colors.Alert.Success[100];
+    if (score >= 5) return colors.Alert.Warning[100];
+    return colors.Alert.Error[100];
+  };
+
+  const averageScore = calculateAverageScore();
+
+  return (
+    <ScrollView style={{ flex: 1, backgroundColor: colors.Greyscale[0] }}>
+      <View
+        style={{
+          backgroundColor: colors.primary[500],
+          padding: scale(24),
+          alignItems: 'center',
+        }}
+      >
+        <Text
+          style={[texts.body.large.regular, { color: colors.Others.white }]}
+        >
+          Session Complete!
+        </Text>
+        <VSpacer height={8} />
+        <AnimatedNumber
+          value={Number(averageScore)}
+          decimals={1}
+          suffix="/10"
+          style={[texts.heading.heading1, { color: colors.Others.white }]}
+        />
+        <VSpacer height={4} />
+        <Text
+          style={[
+            texts.body.medium.regular,
+            { color: colors.Others.white, opacity: 0.9 },
+          ]}
+        >
+          Average Score
+        </Text>
+      </View>
+
+      <View style={{ flexDirection: 'row', padding: scale(20) }}>
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: colors.Others.white,
+            padding: scale(16),
+            borderRadius: scale(12),
+            alignItems: 'center',
+          }}
+        >
+          <Text
+            style={[texts.heading.heading4, { color: colors.Greyscale[900] }]}
+          >
+            {questionsAnswered.length}
+          </Text>
+          <VSpacer height={4} />
+          <Text
+            style={[texts.body.small.regular, { color: colors.Greyscale[500] }]}
+          >
+            Questions
+          </Text>
+        </View>
+        <HSpacer width={12} />
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: colors.Others.white,
+            padding: scale(16),
+            borderRadius: scale(12),
+            alignItems: 'center',
+          }}
+        >
+          <Text
+            style={[texts.heading.heading4, { color: colors.Greyscale[900] }]}
+          >
+            {currentSession?.type || 'N/A'}
+          </Text>
+          <VSpacer height={4} />
+          <Text
+            style={[texts.body.small.regular, { color: colors.Greyscale[500] }]}
+          >
+            Type
+          </Text>
+        </View>
+      </View>
+
+      <View style={{ paddingHorizontal: scale(20) }}>
+        <Text
+          style={[texts.heading.heading5, { color: colors.Greyscale[900] }]}
+        >
+          Question Breakdown
+        </Text>
+        <VSpacer height={16} />
+
+        {questionsAnswered.map((qa, index) => (
+          <TouchableOpacity
+            key={index}
+            activeOpacity={0.7}
+            disabled={!qa.feedback}
+            onPress={() =>
+              qa.feedback &&
+              (navigation as any).navigate('FeedbackDetail', {
+                questionAnswer: qa,
+              })
+            }
+            style={{
+              backgroundColor: colors.Others.white,
+              padding: scale(16),
+              borderRadius: scale(12),
+              marginBottom: scale(12),
+            }}
+          >
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <Text
+                style={[
+                  texts.body.medium.semibold,
+                  { color: colors.Greyscale[900] },
+                ]}
+              >
+                Question {index + 1}
+              </Text>
+              <View
+                style={{
+                  backgroundColor: getScoreBadgeColor(qa.feedback?.score || 0),
+                  paddingHorizontal: scale(12),
+                  paddingVertical: scale(4),
+                  borderRadius: scale(12),
+                }}
+              >
+                <Text
+                  style={[
+                    texts.body.small.semibold,
+                    { color: colors.Others.white },
+                  ]}
+                >
+                  {qa.feedback?.score || 0}/10
+                </Text>
+              </View>
+            </View>
+
+            <VSpacer height={12} />
+            <Text
+              style={[
+                texts.body.small.regular,
+                { color: colors.Greyscale[500] },
+              ]}
+            >
+              {qa.question.text}
+            </Text>
+
+            {qa.feedback && (
+              <>
+                <VSpacer height={8} />
+                <View
+                  style={{
+                    height: scale(1),
+                    backgroundColor: colors.Greyscale[100],
+                  }}
+                />
+                <VSpacer height={12} />
+                <Text
+                  style={[
+                    texts.body.small.semibold,
+                    { color: colors.Greyscale[900] },
+                  ]}
+                >
+                  Strengths:
+                </Text>
+                <VSpacer height={6} />
+                {qa.feedback.strengths.map((strength, i) => (
+                  <Text
+                    key={i}
+                    style={[
+                      texts.body.small.regular,
+                      {
+                        color: colors.Alert.Success[100],
+                        marginBottom: scale(4),
+                      },
+                    ]}
+                  >
+                    ✓ {strength}
+                  </Text>
+                ))}
+
+                <VSpacer height={12} />
+                <Text
+                  style={[
+                    texts.body.small.semibold,
+                    { color: colors.Greyscale[900] },
+                  ]}
+                >
+                  Areas to Improve:
+                </Text>
+                <VSpacer height={6} />
+                {qa.feedback.improvements.map((improvement, i) => (
+                  <Text
+                    key={i}
+                    style={[
+                      texts.body.small.regular,
+                      {
+                        color: colors.Alert.Warning[100],
+                        marginBottom: scale(4),
+                      },
+                    ]}
+                  >
+                    • {improvement}
+                  </Text>
+                ))}
+              </>
+            )}
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      <View style={{ padding: scale(20), paddingBottom: scale(40) }}>
+        <Button title="Back to Home" onPress={handleFinish} />
+        <VSpacer height={12} />
+        <TouchableOpacity style={{ padding: scale(16), alignItems: 'center' }}>
+          <Text
+            style={[texts.body.medium.semibold, { color: colors.primary[500] }]}
+          >
+            Start New Interview
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
+  );
 };
 
 export default SessionSummaryScreen;

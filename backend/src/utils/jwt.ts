@@ -1,10 +1,11 @@
 import jwt from 'jsonwebtoken';
 import { JWTPayload } from '../types';
+import { env } from './env';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'default-secret';
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
-const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET || 'default-refresh-secret';
-const REFRESH_TOKEN_EXPIRES_IN = process.env.REFRESH_TOKEN_EXPIRES_IN || '30d';
+const JWT_SECRET = env.JWT_SECRET;
+const JWT_EXPIRES_IN = env.JWT_EXPIRES_IN;
+const REFRESH_TOKEN_SECRET = env.REFRESH_TOKEN_SECRET;
+const REFRESH_TOKEN_EXPIRES_IN = env.REFRESH_TOKEN_EXPIRES_IN;
 
 /**
  * Generate access token

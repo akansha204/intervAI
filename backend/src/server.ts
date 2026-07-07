@@ -1,7 +1,10 @@
-import express, { Application, Request, Response } from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
 import prisma from './utils/prisma';
+import { createApp } from './app';
+import { env } from './utils/env';
+import { logger } from './utils/logger';
+
+const app = createApp();
+
 import authRoutes from './routes/auth.routes';
 import interviewRoutes from './routes/interview.routes';
 import { errorHandler } from './middleware/errorHandler';
@@ -55,29 +58,28 @@ app.use((_req: Request, res: Response) => {
 
 // Start server and test database connection
 const startServer = async () => {
-    try {
-        // Test database connection
-        await prisma.$connect();
-        console.log('✅ Database connected successfully');
+  try {
+    await prisma.$connect();
+    logger.info('Database connected');
 
-        app.listen(PORT, () => {
-            console.log(`🚀 Server is running on port ${PORT}`);
-            console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
-            console.log(`🔗 Health check: http://localhost:${PORT}/health`);
-        });
-    } catch (error) {
-        console.error('❌ Failed to connect to database:', error);
-        process.exit(1);
-    }
+    app.listen(env.PORT, () => {
+      logger.info(
+        { port: env.PORT, env: env.NODE_ENV },
+        `Server listening on http://localhost:${env.PORT}`,
+      );
+    });
+  } catch (err) {
+    logger.fatal({ err }, 'Failed to connect to database');
+    process.exit(1);
+  }
 };
 
 startServer();
 
-// Graceful shutdown
 process.on('SIGINT', async () => {
-    console.log('\n🛑 Shutting down gracefully...');
-    await prisma.$disconnect();
-    process.exit(0);
+  logger.info('Shutting down gracefully');
+  await prisma.$disconnect();
+  process.exit(0);
 });
 
 export default app;
