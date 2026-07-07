@@ -4,11 +4,11 @@ import { logger } from '../utils/logger';
 
 const genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY);
 
-const MODEL_NAME = 'gemini-3-flash-preview';
+const MODEL_NAME = 'gemini-2.5-flash';
 
 export const generateContent = async (prompt: string): Promise<string> => {
   try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+    const model = genAI.getGenerativeModel({ model: MODEL_NAME });
     const result = await model.generateContent(prompt);
     const response = await result.response;
     return response.text();

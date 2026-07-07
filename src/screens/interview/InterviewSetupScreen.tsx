@@ -26,12 +26,12 @@ const InterviewSetupScreen = () => {
     useState<DifficultyId>('medium');
 
   const handleStart = () => {
-    navigation.navigate(
-      'InterviewSession' as never,
+    (navigation.navigate as (screen: string, params: object) => void)(
+      'InterviewSession',
       {
         type: selectedType,
         difficulty: selectedDifficulty,
-      } as never,
+      },
     );
   };
 

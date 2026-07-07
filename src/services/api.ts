@@ -52,7 +52,7 @@ const isRetryableStatus = (status?: number) => {
   return status === 408 || status === 429 || (status >= 500 && status < 600);
 };
 
-const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+const sleep = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms));
 
 api.interceptors.response.use(
   response => response,
