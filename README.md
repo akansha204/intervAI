@@ -89,6 +89,8 @@ Seven tables today: `users`, `resumes`, `questions`, `interview_sessions`, `answ
 
 ## Getting started
 
+> **First time here?** Follow the full step-by-step guide in [docs/SETUP.md](docs/SETUP.md) — it covers installing Node, JDK 17, Android Studio, Postgres, and getting a Gemini API key from scratch.
+
 ### Prereqs
 - Node ≥ 20
 - PostgreSQL ≥ 15 (Neon works)

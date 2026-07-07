@@ -42,17 +42,17 @@ coverage/
 mobile/node_modules/
 
 # Android
-mobile/android/.gradle/
-mobile/android/build/
-mobile/android/app/build/
-mobile/android/local.properties
-mobile/android/*.iml
-mobile/android/.cxx/
-mobile/android/.kotlin/
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/*.iml
+android/.cxx/
+android/.kotlin/
 
 # iOS
-mobile/ios/build/
-mobile/ios/Pods/
+ios/build/
+ios/Pods/
 mobile/ios/DerivedData/
 
 # Xcode
