@@ -63,6 +63,27 @@ export const register = createAsyncThunk(
   },
 );
 
+export const resetPassword = createAsyncThunk(
+  'auth/resetPassword',
+  async (
+    {
+      email,
+      otp,
+      newPassword,
+    }: { email: string; otp: string; newPassword: string },
+    { rejectWithValue },
+  ) => {
+    try {
+      const response = await authService.resetPassword(email, otp, newPassword);
+      await AsyncStorage.setItem('accessToken', response.accessToken);
+      await AsyncStorage.setItem('refreshToken', response.refreshToken);
+      return response;
+    } catch (error: any) {
+      return rejectWithValue(error.message || 'Reset password failed');
+    }
+  },
+);
+
 export const logout = createAsyncThunk('auth/logout', async () => {
   // Clear tokens from AsyncStorage
   await AsyncStorage.removeItem('accessToken');
@@ -129,6 +150,27 @@ const authSlice = createSlice({
         },
       )
       .addCase(register.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      });
+
+    // Reset Password
+    builder
+      .addCase(resetPassword.pending, state => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(
+        resetPassword.fulfilled,
+        (state, action: PayloadAction<AuthResponse>) => {
+          state.isLoading = false;
+          state.isAuthenticated = true;
+          state.user = action.payload.user;
+          state.accessToken = action.payload.accessToken;
+          state.refreshToken = action.payload.refreshToken;
+        },
+      )
+      .addCase(resetPassword.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
       });

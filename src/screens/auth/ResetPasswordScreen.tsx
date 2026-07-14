@@ -8,12 +8,9 @@ import {
   Alert,
 } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
-import { useDispatch } from 'react-redux';
-import { AppDispatch } from '../../store';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../../store';
 import { AuthStackParamList } from '../../types';
-import * as authService from '../../services/authService';
-// We might need an action to set the user state after auto-login if it exists
-// But for now let's just use the service and alert
 import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
 import { validatePassword } from '../../utils/validation';
@@ -21,12 +18,11 @@ import { colors } from '../../styles/colors';
 import { texts } from '../../styles/texts';
 import { scale, verticalScale } from '../../helpers/scaler';
 import VSpacer from '../../components/base/spacer/VSpacer/VSpacer';
-import { setCredentials } from '../../store/slices/authSlice';
+import { resetPassword } from '../../store/slices/authSlice';
 
 type ResetPasswordRouteProp = RouteProp<AuthStackParamList, 'ResetPassword'>;
 
 const ResetPasswordScreen = () => {
-  const navigation = useNavigation();
   const route = useRoute<ResetPasswordRouteProp>();
   const dispatch = useDispatch<AppDispatch>();
   const { email } = route.params;
@@ -35,7 +31,7 @@ const ResetPasswordScreen = () => {
   const [newPassword, setNewPassword] = useState('');
   const [otpError, setOtpError] = useState('');
   const [passwordError, setPasswordError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const { isLoading } = useSelector((state: RootState) => state.auth);
 
   const handleResetPassword = async () => {
     setOtpError('');
@@ -52,22 +48,16 @@ const ResetPasswordScreen = () => {
       return;
     }
 
-    setIsLoading(true);
     try {
-      const response = await authService.resetPassword(email, otp, newPassword);
-
-      // Auto-login the user
-      dispatch(setCredentials(response));
+      await dispatch(resetPassword({ email, otp, newPassword })).unwrap();
 
       Alert.alert(
         'Success',
         'Your password has been reset and you are now logged in.',
         [{ text: 'Great!' }]
       );
-    } catch (error: any) {
-      Alert.alert('Error', error.response?.data?.message || 'Failed to reset password');
-    } finally {
-      setIsLoading(false);
+    } catch (err: any) {
+      Alert.alert('Error', err || 'Failed to reset password');
     }
   };
 
