@@ -38,3 +38,26 @@ export const getProfile = async (): Promise<User> => {
 export const logout = async (): Promise<void> => {
   await api.post('/auth/logout');
 };
+
+/**
+ * Forgot password - request OTP
+ */
+export const forgotPassword = async (email: string): Promise<void> => {
+  await api.post('/auth/forgot-password', { email });
+};
+
+/**
+ * Reset password with OTP
+ */
+export const resetPassword = async (
+  email: string,
+  otp: string,
+  newPassword: string,
+): Promise<AuthResponse> => {
+  const response = await api.post('/auth/reset-password', {
+    email,
+    otp,
+    newPassword,
+  });
+  return response.data.data;
+};
