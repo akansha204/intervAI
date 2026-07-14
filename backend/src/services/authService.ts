@@ -204,13 +204,13 @@ export const forgotPassword = async (email: string): Promise<void> => {
 };
 
 /**
- * Verify OTP and reset password
+ * Verify OTP and reset password, then return auth tokens
  */
 export const resetPassword = async (
     email: string,
     otp: string,
     newPassword: string
-): Promise<void> => {
+): Promise<AuthResponse> => {
     const sanitizedEmail = sanitizeEmail(email);
 
     const user = await prisma.user.findUnique({
@@ -236,7 +236,7 @@ export const resetPassword = async (
     const hashedPassword = await bcrypt.hash(newPassword, SALT_ROUNDS);
 
     // Update password and clear OTP fields
-    await prisma.user.update({
+    const updatedUser = await prisma.user.update({
         where: { id: user.id },
         data: {
             password: hashedPassword,
@@ -244,4 +244,20 @@ export const resetPassword = async (
             resetOtpExpiry: null,
         },
     });
+
+    // Generate tokens to log the user in immediately
+    const accessToken = generateAccessToken(updatedUser.id, updatedUser.email);
+    const refreshToken = generateRefreshToken(updatedUser.id, updatedUser.email);
+
+    const userPayload: UserPayload = {
+        id: updatedUser.id,
+        email: updatedUser.email,
+        name: updatedUser.name,
+    };
+
+    return {
+        user: userPayload,
+        accessToken,
+        refreshToken,
+    };
 };

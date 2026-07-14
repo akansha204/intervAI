@@ -130,11 +130,12 @@ export const resetPassword = async (req: Request, res: Response) => {
             });
         }
 
-        await authService.resetPassword(email, otp, newPassword);
+        const result = await authService.resetPassword(email, otp, newPassword);
 
         return res.status(200).json({
             status: 'success',
             message: 'Password reset successfully',
+            data: result,
         });
     } catch (error: any) {
         return res.status(400).json({
