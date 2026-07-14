@@ -165,3 +165,83 @@ export const getUserById = async (userId: string): Promise<UserPayload> => {
 
     return user;
 };
+
+/**
+ * Generate and save OTP for password reset
+ */
+export const forgotPassword = async (email: string): Promise<void> => {
+    const sanitizedEmail = sanitizeEmail(email);
+
+    if (!isValidEmail(sanitizedEmail)) {
+        throw new Error('Invalid email format');
+    }
+
+    const user = await prisma.user.findUnique({
+        where: { email: sanitizedEmail },
+    });
+
+    if (!user) {
+        // We don't want to reveal if a user exists or not for security reasons
+        // but for this app's UX we can just return or throw a generic message
+        // However, the requirement says "send to user's registered email"
+        return;
+    }
+
+    // Generate 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes expiry
+
+    await prisma.user.update({
+        where: { id: user.id },
+        data: {
+            resetOtp: otp,
+            resetOtpExpiry: otpExpiry,
+        },
+    });
+
+    // TODO: Send email with OTP
+    console.log(`OTP for ${sanitizedEmail}: ${otp}`);
+};
+
+/**
+ * Verify OTP and reset password
+ */
+export const resetPassword = async (
+    email: string,
+    otp: string,
+    newPassword: string
+): Promise<void> => {
+    const sanitizedEmail = sanitizeEmail(email);
+
+    const user = await prisma.user.findUnique({
+        where: { email: sanitizedEmail },
+    });
+
+    if (!user || !user.resetOtp || !user.resetOtpExpiry) {
+        throw new Error('Invalid or expired OTP');
+    }
+
+    // Check if OTP matches and is not expired
+    if (user.resetOtp !== otp || user.resetOtpExpiry < new Date()) {
+        throw new Error('Invalid or expired OTP');
+    }
+
+    // Validate new password
+    const passwordValidation = isValidPassword(newPassword);
+    if (!passwordValidation.valid) {
+        throw new Error(passwordValidation.message || 'Invalid password');
+    }
+
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, SALT_ROUNDS);
+
+    // Update password and clear OTP fields
+    await prisma.user.update({
+        where: { id: user.id },
+        data: {
+            password: hashedPassword,
+            resetOtp: null,
+            resetOtpExpiry: null,
+        },
+    });
+};

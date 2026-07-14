@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import * as authService from '../services/authService';
-import { RegisterRequest, LoginRequest, RefreshTokenRequest, AuthRequest } from '../types';
+import { RegisterRequest, LoginRequest, RefreshTokenRequest, AuthRequest, ForgotPasswordRequest, ResetPasswordRequest } from '../types';
 
 /**
  * Register user
@@ -84,6 +84,62 @@ export const refresh = async (req: Request, res: Response) => {
         return res.status(401).json({
             status: 'error',
             message: error.message || 'Invalid refresh token',
+        });
+    }
+};
+
+/**
+ * Forgot password - request OTP
+ */
+export const forgotPassword = async (req: Request, res: Response) => {
+    try {
+        const { email } = req.body as ForgotPasswordRequest;
+
+        if (!email) {
+            return res.status(400).json({
+                status: 'error',
+                message: 'Email is required',
+            });
+        }
+
+        await authService.forgotPassword(email);
+
+        return res.status(200).json({
+            status: 'success',
+            message: 'If an account exists with this email, an OTP has been sent.',
+        });
+    } catch (error: any) {
+        return res.status(400).json({
+            status: 'error',
+            message: error.message || 'Failed to process request',
+        });
+    }
+};
+
+/**
+ * Reset password using OTP
+ */
+export const resetPassword = async (req: Request, res: Response) => {
+    try {
+        const { email, otp, newPassword } = req.body as ResetPasswordRequest;
+
+        if (!email || !otp || !newPassword) {
+            return res.status(400).json({
+                status: 'error',
+                message: 'Missing required fields',
+            });
+        }
+
+        await authService.resetPassword(email, otp, newPassword);
+
+        return res.status(200).json({
+            status: 'success',
+            message: 'Password reset successfully',
+        });
+    } catch (error: any) {
+        return res.status(400).json({
+            status: 'error',
+            message: error.message || 'Password reset failed',
         });
     }
 };

@@ -35,6 +35,24 @@ router.post(
   authController.refresh,
 );
 
+router.post(
+  '/forgot-password',
+  body('email').isEmail().withMessage('Must be a valid email').normalizeEmail(),
+  validate,
+  authController.forgotPassword,
+);
+
+router.post(
+  '/reset-password',
+  body('email').isEmail().withMessage('Must be a valid email').normalizeEmail(),
+  body('otp').isString().isLength({ min: 6, max: 6 }).withMessage('OTP must be 6 digits'),
+  body('newPassword')
+    .isLength({ min: 8 })
+    .withMessage('Password must be at least 8 characters'),
+  validate,
+  authController.resetPassword,
+);
+
 router.get('/profile', authenticate, authController.getProfile);
 router.post('/logout', authenticate, authController.logout);
 
