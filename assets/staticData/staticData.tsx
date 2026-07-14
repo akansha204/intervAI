@@ -3,6 +3,8 @@
  * Keep this file dependency-free (no React, no styles) so it stays portable.
  */
 
+
+//static mock up data
 export type Company = {
     id: number;
     name: string;
